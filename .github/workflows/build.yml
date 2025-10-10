@@ -1,0 +1,137 @@
+---
+name: Build Image
+on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '00 06 * * *'  # 06:00am UTC everyday
+  merge_group:  
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/README.md'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: "bootc-centos"
+  IMAGE_DESC: "bootc CentOS workstation"
+  IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
+  DEFAULT_TAG: "latest"
+  CENTOS_VERSION: "10"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build_push:
+    name: Build and push image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Setup Just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+
+      - name: Check Just Syntax
+        shell: bash
+        run: |
+          just check
+
+      - name: Get current date
+        id: date
+        run: |
+          echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> $GITHUB_OUTPUT
+
+      - name: Image Metadata
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
+        id: metadata
+        with:
+          tags: |
+            type=raw,value=latest
+            type=raw,value=latest.{{date 'YYYYMMDD'}}
+            type=raw,value={{date 'YYYYMMDD'}}
+            type=raw,value=${{ env.CENTOS_VERSION }}
+            type=raw,value=${{ env.CENTOS_VERSION }}.{{date 'YYYYMMDD'}}
+            type=sha,enable=${{ github.event_name == 'pull_request' }}
+            type=ref,event=pr
+          labels: |
+            org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            org.opencontainers.image.description=${{ env.IMAGE_DESC }}
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/main/Containerfile
+            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+            org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ env.CENTOS_VERSION }}
+            containers.bootc=1
+          sep-tags: " "
+          sep-annotations: " "
+
+      - name: Build Image
+        id: build-image
+        shell: bash
+        run: |
+          just=$(which just)
+          sudo $just build "${IMAGE_NAME}" "${DEFAULT_TAG}"
+
+      - name: Run Rechunker
+        id: rechunk
+        uses: hhd-dev/rechunk@ca77507401f8700bb0b25ebecbbf980a078cd180 # v1.2.2
+        with:
+          rechunk: 'ghcr.io/hhd-dev/rechunk:v1.0.1'
+          ref: "localhost/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          prev-ref: "${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          skip_compression: true
+          version: ${{ env.CENTOS_VERSION }}
+          labels: ${{ steps.metadata.outputs.labels }} 
+
+      - name: Load in podman and tag
+        run: |
+          IMAGE=$(podman pull ${{ steps.rechunk.outputs.ref }})
+          sudo rm -rf ${{ steps.rechunk.outputs.location }}
+          for tag in ${{ steps.metadata.outputs.tags }}; do
+            podman tag $IMAGE ${{ env.IMAGE_NAME }}:$tag
+          done
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push To GHCR
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        id: push
+        with:
+          registry: ${{ env.IMAGE_REGISTRY }}
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ steps.metadata.outputs.tags }}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+
+      - name: Sign container image
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        run: |
+          IMAGE_FULL="${{ env.IMAGE_REGISTRY }}/${IMAGE_NAME}"
+          for tag in ${{ steps.metadata.outputs.tags }}; do
+            cosign sign -y --key env://COSIGN_PRIVATE_KEY $IMAGE_FULL:$tag
+          done
+        env:
+          TAGS: ${{ steps.push.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
