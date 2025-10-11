@@ -61,16 +61,16 @@ default-folder-viewer='list-view'
 show-weekdate=true
 EOF
 
-# Mitigate cursor lag with VRR and make GNOME slightly faster
+# Mitigate cursor lag with VRR and make GNOME slightly faster(?)
 cat <<EOF >> /etc/environment
 MUTTER_DEBUG_FORCE_KMS_MODE=simple
 GNOME_SHELL_SLOWDOWN_FACTOR=0.8
 EOF
 
-# Apply dconf settings
+# Apply dconf settings 
 dconf update
 
-# Write firewalld zone "Workstation"
+# Write firewalld zone "Workstation" (more permissive than stock)
 mkdir -p /usr/lib/firewalld/zones
 cat > /usr/lib/firewalld/zones/Workstation.xml <<EOF
 <?xml version="1.0" encoding="utf-8"?>

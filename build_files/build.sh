@@ -2,6 +2,8 @@
 
 set -xeuo pipefail
 
+echo "::group::🔧 BASE SETUP"
+
 dnf remove -y subscription-manager
 dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)'
 
@@ -18,11 +20,19 @@ dnf upgrade -y epel-release
 # Install gcc for brew (pulls kernel-headers)
 dnf -y --setopt=install_weak_deps=False install gcc
 
-# Swap kernel
-# bash "$(dirname "$0")/kernel.sh"
+echo "::endgroup::"
+
+# Swap kernel (Hyperscale SIG)
+#bash "$(dirname "$0")/kernel_hsk.sh"
+
+# Swap kernel (Kmods SIG)
+#bash "$(dirname "$0")/kernel_kmods.sh"
 
 # Install desktop
 bash "$(dirname "$0")/desktop.sh"
+
+# Non-free multimedia codecs (mostly needed only for thumbnailing media files, as flatpaks have their own codecs)
+#bash "$(dirname "$0")/multimedia.sh"
 
 # Install packages
 bash "$(dirname "$0")/packages.sh"
@@ -39,6 +49,8 @@ bash "$(dirname "$0")/services.sh"
 # Configure plymouth and generate initramfs
 bash "$(dirname "$0")/initramfs.sh"
 
+echo "::group::🧹 CLEANUP"
+
 # Final cleanup
 dnf clean all
 find /var -mindepth 1 -maxdepth 1 ! -path '/var/cache' -delete 2>/dev/null || true
@@ -47,3 +59,5 @@ mkdir -p /var /boot
 
 # Make /usr/local writeable
 ln -s /var/usrlocal /usr/local
+
+echo "::endgroup::"

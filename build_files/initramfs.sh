@@ -2,7 +2,7 @@
 
 set -xeuo pipefail
 
-echo "::group::⚙️ INITRAMFS GENERATION"
+echo "::group::🛠️ INITRAMFS GENERATION"
 
 # Configure dracut to include plymouth
 mkdir -p /etc/dracut.conf.d
