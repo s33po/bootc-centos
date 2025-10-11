@@ -61,9 +61,60 @@ systemctl set-default graphical.target
 # EOF
 
 # Option 2: More aggressive compatibility parameters
+mkdir -p /usr/lib/bootc/kargs.d
 cat > /usr/lib/bootc/kargs.d/20-amdgpu.toml << 'EOF'
-kargs = ["amdgpu.runpm=0", "amdgpu.dpm=1", "amdgpu.si_support=1", "amdgpu.cik_support=1"]
+kargs = ["amdgpu.runpm=0", "amdgpu.dpm=1", "amdgpu.si_support=1", "amdgpu.cik_support=1", "amdgpu.runpm_delay=5000"]
 EOF
+
+# Additional SMU version mismatch fixes
+cat > /usr/lib/bootc/kargs.d/21-amd-smu.toml << 'EOF'
+# SMU firmware version tolerance
+kargs = ["amdgpu.smu_memory_pool_size=0", "amdgpu.gpu_recovery=0"]
+EOF
+
+# IOMMU/PCIe timing fix for AMD systems
+cat > /usr/lib/bootc/kargs.d/22-iommu.toml << 'EOF'
+# AMD IOMMU configuration for stability
+kargs = ["amd_iommu=on", "iommu=pt"]
+EOF
+
+# Force early AMD GPU module loading to avoid race conditions
+mkdir -p /etc/modules-load.d
+echo "amdgpu" > /etc/modules-load.d/amdgpu.conf
+
+# GDM delay to ensure GPU is fully initialized
+mkdir -p /etc/systemd/system/gdm.service.d
+cat > /etc/systemd/system/gdm.service.d/99-delay.conf << 'EOF'
+[Unit]
+After=multi-user.target
+After=graphical-session-pre.target
+
+[Service]
+ExecStartPre=/bin/sleep 3
+EOF
+
+# Fix sysusers issues that can cause boot hangs after GPU init
+mkdir -p /etc/systemd/system/systemd-sysusers.service.d
+cat > /etc/systemd/system/systemd-sysusers.service.d/99-bootc-fix.conf << 'EOF'
+[Unit]
+# Ensure sysusers runs after filesystem is properly mounted
+After=local-fs.target
+After=systemd-remount-fs.service
+
+[Service]
+# Add timeout and restart on failure
+TimeoutSec=30
+Restart=on-failure
+RestartSec=2
+EOF
+
+# Add to kargs for detailed boot logging
+cat > /usr/lib/bootc/kargs.d/99-debug.toml << 'EOF'
+kargs = ["systemd.log_level=debug", "systemd.log_target=console"]
+EOF
+
+# Alternative: Disable problematic sysusers entirely for graphics users
+# systemctl mask systemd-sysusers.service
 
 # Option 3: Most aggressive - if all else fails
 # cat > /usr/lib/bootc/kargs.d/20-amdgpu.toml << 'EOF'
