@@ -2,6 +2,8 @@
 
 set -xeuo pipefail
 
+echo "::group::🧊 FLATPAK CONFIG"
+
 # Add Flathub
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub.org/repo/flathub.flatpakrepo"
@@ -28,3 +30,5 @@ org.libreoffice.LibreOffice
 it.mijorus.gearlever
 be.alexandervanhee.gradia
 EOF
+
+echo "::endgroup::"

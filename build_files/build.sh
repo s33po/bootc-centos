@@ -5,19 +5,21 @@ set -xeuo pipefail
 dnf remove -y subscription-manager
 dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)'
 
-# Configure bootc updates
-sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
-sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
-sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
-sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
+# Set global dnf options
+dnf config-manager --save \
+    --setopt=max_parallel_downloads=10 \
+    --setopt=exclude=loupe,PackageKit,PackageKit-command-not-found,rootfiles,firefox,redhat-flatpak-repo
 
 # Enable CRB and install EPEL
 dnf install -y 'dnf-command(config-manager)' epel-release
 dnf config-manager --set-enabled crb
 dnf upgrade -y epel-release
 
-# Exclude some unneeded packages
-dnf config-manager --save --setopt=exclude=loupe,PackageKit,PackageKit-command-not-found,rootfiles,firefox,redhat-flatpak-repo
+# Install gcc for brew (pulls kernel-headers)
+dnf -y --setopt=install_weak_deps=False install gcc
+
+# Swap kernel
+# bash "$(dirname "$0")/kernel.sh"
 
 # Install desktop
 bash "$(dirname "$0")/desktop.sh"

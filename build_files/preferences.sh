@@ -2,8 +2,16 @@
 
 set -xeuo pipefail
 
+echo "::group::📝 SYSTEM PREFERENCES"
+
 # Disable lastlog display
 authselect enable-feature with-silent-lastlog
+
+# Configure bootc updates
+sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
+sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
 
 # Set up dconf system profile
 mkdir -p /etc/dconf/profile
@@ -62,7 +70,7 @@ EOF
 # Apply dconf settings
 dconf update
 
-# Write firewalld "Workstation" zone
+# Write firewalld zone "Workstation"
 mkdir -p /usr/lib/firewalld/zones
 cat > /usr/lib/firewalld/zones/Workstation.xml <<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -82,28 +90,11 @@ allowed.</description>
 </zone>
 EOF
 
-# Set default firewalld zone to Workstation
+# Set default firewalld zone to "Workstation"
 firewall-offline-cmd --set-default-zone=Workstation
 
 # Set zsh as default shell for new users
 sed -i 's/bash/zsh/g' /etc/default/useradd
-
-# Enable zsh for existing users (if they exist)
-for user_home in /home/*; do
-  if [ -d "$user_home" ] && [ -w "$user_home" ]; then
-    username=$(basename "$user_home")
-    # Skip system users
-    if id "$username" &>/dev/null && [ "$(id -u "$username")" -ge 1000 ]; then
-      # Change shell to zsh
-      chsh -s /bin/zsh "$username" 2>/dev/null || true
-      # Copy zsh config if .zshrc doesn't exist
-      if [ ! -f "$user_home/.zshrc" ]; then
-        cp /etc/skel/.zshrc "$user_home/.zshrc" 2>/dev/null || true
-        chown "$username:$username" "$user_home/.zshrc" 2>/dev/null || true
-      fi
-    fi
-  fi
-done
 
 # Set default zsh config
 mkdir -p /etc/skel
@@ -167,3 +158,5 @@ alias fixperms='sudo chown -R $USER:$USER'
 alias please='sudo $(history | tail -1 | sed "s/^[[:space:]]*[0-9]*[[:space:]]*//")'
 alias defpaks='xargs -a /etc/flatpak/defpaks.list -r flatpak install -y --noninteractive flathub && echo "Flatpak installation complete!"'
 EOF
+
+echo "::endgroup::"

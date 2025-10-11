@@ -2,6 +2,8 @@
 
 set -xeuo pipefail
 
+echo "::group::📦 EXTRA PACKAGES"
+
 # Install extra packages
 dnf -y install \
 	container-tools \
@@ -25,3 +27,5 @@ dnf -y install \
 dnf config-manager --add-repo "https://packages.microsoft.com/yumrepos/vscode"
 dnf config-manager --set-disabled packages.microsoft.com_yumrepos_vscode
 dnf -y --enablerepo packages.microsoft.com_yumrepos_vscode --nogpgcheck  install code
+
+echo "::endgroup::"
