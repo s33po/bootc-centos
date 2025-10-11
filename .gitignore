@@ -2,4 +2,3 @@ cosign.key
 output/
 *.raw
 *.qcow2
-cleanup-extended.sh

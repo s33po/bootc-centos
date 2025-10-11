@@ -1,56 +1,43 @@
 #!/usr/bin/env bash
 
-set -euox pipefail
+set -xeuo pipefail
 
 dnf remove -y subscription-manager
+dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)'
 
+# Configure bootc updates
+sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
+sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
+
+# Enable CRB and install EPEL
 dnf install -y 'dnf-command(config-manager)' epel-release
 dnf config-manager --set-enabled crb
 dnf upgrade -y epel-release
 
-# Install "Workstation"
-dnf -y group install "Workstation"
+# Exclude some unneeded packages
+dnf config-manager --save --setopt=exclude=loupe,PackageKit,PackageKit-command-not-found,rootfiles,firefox,redhat-flatpak-repo
 
-# Install basic support for thumbnailing, wallpapers and image previews
-dnf -y install --skip-broken --setopt=install_weak_deps=False \
-    avif-pixbuf-loader \
-    gdk-pixbuf2-modules-extra \
-    jxl-pixbuf-loader \
-    libjxl \
-    webp-pixbuf-loader
+# Install desktop
+bash "$(dirname "$0")/desktop.sh"
 
-# Install stuff
-dnf -y install --nobest \
-	container-tools \
-	systemd-container \
-	system-reinstall-bootc \
-	btop \
-	nvtop \
-	distrobox \
-	fuse \
-	fastfetch \
-	just \
-	steam-devices \
-	zsh \
-	fzf \
-	tmux \
-	fpaste \
-    jetbrains-mono-fonts
+# Install packages
+bash "$(dirname "$0")/packages.sh"
 
-# Install VSCode
-dnf config-manager --add-repo "https://packages.microsoft.com/yumrepos/vscode"
-dnf config-manager --set-disabled packages.microsoft.com_yumrepos_vscode
-dnf -y --enablerepo packages.microsoft.com_yumrepos_vscode --nogpgcheck  install code
+# Configure flatpaks
+bash "$(dirname "$0")/flatpak.sh"
 
-systemctl enable gdm.service
+# Configure preferences
+bash "$(dirname "$0")/preferences.sh"
 
-# Add Flathub
-mkdir -p /etc/flatpak/remotes.d
-curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub.org/repo/flathub.flatpakrepo"
+# Enable/disable services
+bash "$(dirname "$0")/services.sh"
 
-# Disable lastlog display 
-authselect enable-feature with-silent-lastlog
+# Configure plymouth and generate initramfs
+bash "$(dirname "$0")/initramfs.sh"
 
+# Final cleanup
 dnf clean all
 find /var -mindepth 1 -maxdepth 1 ! -path '/var/cache' -delete 2>/dev/null || true
 find /var/cache -mindepth 1 ! -path '/var/cache/dnf*' -delete 2>/dev/null || true
