@@ -116,6 +116,32 @@ EOF
 # Alternative: Disable problematic sysusers entirely for graphics users
 # systemctl mask systemd-sysusers.service
 
+# Fix auditd.service issues that cause boot hangs in bootc
+# auditd often fails due to read-only filesystem constraints
+mkdir -p /etc/systemd/system/auditd.service.d
+cat > /etc/systemd/system/auditd.service.d/99-bootc-fix.conf << 'EOF'
+[Unit]
+# Reduce auditd dependencies that can cause hangs
+After=local-fs.target
+ConditionPathExists=/var/log/audit
+
+[Service]
+# Add timeout and allow failure without hanging boot
+TimeoutSec=15
+TimeoutStartSec=15
+Restart=no
+ExecStartPre=/bin/mkdir -p /var/log/audit
+ExecStartPre=/bin/chmod 755 /var/log/audit
+EOF
+
+# Alternative: Disable auditd entirely if it keeps hanging
+# systemctl disable auditd.service
+# systemctl mask auditd.service
+
+# Ensure audit log directory exists with correct permissions
+mkdir -p /var/log/audit
+chmod 755 /var/log/audit
+
 # Option 3: Most aggressive - if all else fails
 # cat > /usr/lib/bootc/kargs.d/20-amdgpu.toml << 'EOF'
 # kargs = ["amdgpu.runpm=0", "amdgpu.dpm=0", "amdgpu.si_support=1", "amdgpu.cik_support=1", "amdgpu.modeset=1", "amdgpu.dc=0"]
