@@ -4,7 +4,7 @@ set -xeuo pipefail
 
 # Remove subscription-manager and install dnf commands
 dnf remove -y subscription-manager
-dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)'
+dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)' time
 
 # Set global dnf options
 dnf config-manager --save \

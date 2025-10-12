@@ -15,7 +15,7 @@ EXCLUDE=(
     "05-kernel-kmods-pin.sh"
     "05-kernel-kmods-lts.sh"
     "11-virtualization.sh"
-    "15-multimedia.sh"
+    "25-multimedia.sh"
     "31-vscode.sh"
     "32-docker.sh"
 )
@@ -26,9 +26,6 @@ if [ -d "${CONTEXT_PATH}/system_files" ]; then
     cp -avf "${CONTEXT_PATH}/system_files/." /
     printf "::endgroup::\n"
 fi
-
-# Install time for timing build scripts
-dnf -y install time
 
 for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f | sort --sort=human-numeric); do
   base=$(basename "$script")
@@ -45,10 +42,13 @@ for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f
     done
   fi
   printf "::group:: ===== ${base} =====\n"
-  /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "$(realpath "$script")"
+  if command -v /usr/bin/time >/dev/null 2>&1; then
+      /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "$(realpath "$script")"
+  else
+      "$(realpath "$script")"
+  fi
   printf "::endgroup::\n"
 done
-
 # Make sure cleanup runs last
 printf "::group:: ===== Image Cleanup =====\n"
 /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "${BUILD_SCRIPTS_PATH}/cleanup.sh"
