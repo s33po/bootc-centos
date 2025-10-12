@@ -9,10 +9,12 @@ dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)' time
 # Set global dnf options
 dnf config-manager --save \
     --setopt=max_parallel_downloads=10 \
-    --setopt=exclude=loupe,PackageKit,PackageKit-command-not-found,rootfiles,firefox,redhat-flatpak-repo \
-    --setopt=keepcache=false \
-    --setopt=fastestmirror=false \
-    --setopt=deltarpm=false
+    --setopt=exclude="\
+        PackageKit,PackageKit-command-not-found,rootfiles,redhat-flatpak-repo,\
+        firefox,loupe,gnome-characters,gnome-font-viewer,gnome-user-docs,\
+        glibc-all-langpacks,cldr-emoji-annotation,\
+        default-fonts-*,google-noto-*\
+    "
     
 # Enable CRB and install EPEL
 dnf install -y 'dnf-command(config-manager)' epel-release

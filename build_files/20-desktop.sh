@@ -10,6 +10,12 @@ dnf -y install glib2
 # Includes GNOME and a basic set of packages for a desktop system
 dnf -y group install "Workstation"
 
+# Install specific langpacks and fonts only for needed languages/locales etc. (edit for your own needs)
+dnf -y --disableexcludes=all --setopt=install_weak_deps=False install \
+    glibc-langpack-{en,fi,ja} \
+    default-fonts-{core,other,cjk} \
+    google-noto-{sans-vf,serif-vf,mono-vf,sans-cjk-vf,serif-cjk-vf,emoji-fonts,color-emoji-fonts,fonts-common}
+
 # Install basic support for image thumbnailing, previews and wallpapers
 dnf -y install --skip-broken --setopt=install_weak_deps=False \
     avif-pixbuf-loader \
