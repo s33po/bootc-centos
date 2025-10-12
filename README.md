@@ -1,27 +1,49 @@
 ## Bootc CentOS Workstation
 
-An opinionated atomic workstation based on CentOS Stream 10 `bootc` image.
+An opinionated atomic workstation based on the CentOS Stream 10 `bootc` image.
 
-### Features
+### Currently building image: `bootc-centos:latest`
 
-- Backported GNOME 48 from the CentOS Hyperscale SIG
-- Small set of opinionated tools, utilities, and fonts
-- Firefox ESR removed in favor of the Flatpak version
-- Basic support for image thumbnailing, previews, etc.
-- Some pre-configured system-wide settings
-- Flathub enabled by default with a curated set of Flatpaks installable via the `defpaks` alias
+- Backported GNOME 48 from the CentOS Hyperscale SIG  
+- Trimmed "Workstation" install  
+- Small set of opinionated tools and utilities  
+- Basic support for image thumbnailing, previews, etc.  
+- Some pre-configured system-wide settings  
+- Flathub enabled by default:  
+    - Firefox ESR not installed in favor of the Flatpak version  
+    - Alias `defpaks` to install default flatpaks  
 
-&nbsp;<br>
+### build_files:
 
-### This image is intended only for my personal use and testing
+- Modular design; specific build scripts can be excluded in `build.sh`  
+- All build scripts are tracked with `time`  
+- Global package exclusion and DNF settings can be configured in `00-base.sh`  
+- Optional build scripts for:  
+    - Kernel swap (latest Hyperscale kernel, pinned kmods mainline kernel, or kmods LTS kernel — 6.18 not available yet)  
+    - Non-free media codecs (from Negativo17)  
+    - Virtualization support  
+    - VSCode and/or Docker installation  
 
-While functional, it should be considered experimental. Use at your own risk.
+- "Workstation" install with opinionated trimmings:  
+    - Fully functional GNOME desktop with required packages for general desktop use  
+    - Minimal set of fonts  
+    - Minimal set of language packs  
+    - No printing support  
+    - Some unnecessary packages excluded or removed  
 
-&nbsp;<br>
----
+These trimmings reduce build time and bandwidth, and make the final image a few hundred MBs smaller (also speeds up rechunker and pushing to GHCR in CI). As this image is built solely for personal use, there is no need to include comprehensive language or localisation support. Fonts can be installed and updated locally, so there is no reason to include them in every image.
+
+## This image is intended only for my personal use
+
+While functional, it should be considered experimental.
+
+I may change installed packages, kernel, or preferences at any time. Use at your own risk.
+
+I strongly recommend forking the repo and building your own image, or using a larger community project instead.
+
 <p align="center">
 <strong><font size="+1">Inspired by:</font></strong><br>
-<a href="https://github.com/ublue-os/bluefin-lts">Bluefin LTS</a>,
-<a href="https://github.com/HeliumOS-org/HeliumOS">HeliumOS</a> and
+<a href="https://github.com/ublue-os/bluefin-lts">Bluefin LTS</a>, 
+<a href="https://github.com/HeliumOS-org/HeliumOS">HeliumOS</a> and 
 <a href="https://github.com/AlmaLinux/atomic-desktop">AlmaLinux Atomic Desktop</a>
 </p>

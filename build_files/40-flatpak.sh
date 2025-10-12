@@ -6,7 +6,7 @@ set -xeuo pipefail
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub.org/repo/flathub.flatpakrepo"
 
-# Add default flatpaks to defpaks.list
+# Add default flatpaks to defpaks.list (install with `defpaks` alias)
 tee /etc/flatpak/defpaks.list <<EOF
 org.mozilla.firefox
 org.gnome.Calendar
@@ -29,7 +29,7 @@ it.mijorus.gearlever
 be.alexandervanhee.gradia
 EOF
 
-# Add gaming flatpaks to gaming.list
+# Add gaming flatpaks to gaming.list (intall with `gaming` alias)
 tee /etc/flatpak/gaming.list <<EOF
 com.valvesoftware.Steam
 com.valvesoftware.Steam.CompatibilityTool.Proton-GE

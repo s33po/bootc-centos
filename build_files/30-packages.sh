@@ -18,5 +18,4 @@ dnf -y install \
 	zsh \
 	fzf \
 	tmux \
-	fpaste \
-    jetbrains-mono-fonts
+	fpaste

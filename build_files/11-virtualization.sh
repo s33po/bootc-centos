@@ -2,7 +2,7 @@
 
 set -xeuo pipefail
 
-# Install minimal required packages for virtualization
+# Install minimal set of packages for virtualization support
 dnf -y install --setopt=install_weak_deps=False \
     libvirt-daemon \
     libvirt-client \

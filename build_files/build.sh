@@ -49,6 +49,7 @@ for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f
   fi
   printf "::endgroup::\n"
 done
+
 # Make sure cleanup runs last
 printf "::group:: ===== Image Cleanup =====\n"
 /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "${BUILD_SCRIPTS_PATH}/cleanup.sh"
