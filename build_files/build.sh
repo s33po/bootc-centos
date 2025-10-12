@@ -2,62 +2,54 @@
 
 set -xeuo pipefail
 
-echo "::group::🔧 BASE SETUP"
+CONTEXT_PATH="$(realpath "$(dirname "$0")/..")"
+BUILD_SCRIPTS_PATH="$(realpath "$(dirname "$0")")"
 
-dnf remove -y subscription-manager
-dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)'
+## This script is made to be modular so you can exclude certain scripts as needed.
+## For example, if you don't want to swap the kernel, exclude ALL kernel swap scripts.
+## If you don't want to install non-free multimedia packages, exclude the multimedia script etc.
 
-# Set global dnf options
-dnf config-manager --save \
-    --setopt=max_parallel_downloads=10 \
-    --setopt=exclude=loupe,PackageKit,PackageKit-command-not-found,rootfiles,firefox,redhat-flatpak-repo
+# List of scripts to EXCLUDE
+EXCLUDE=(
+    "05-kernel-hsk.sh"
+    "05-kernel-kmods-pin.sh"
+    "05-kernel-kmods-lts.sh"
+    "11-virtualization.sh"
+    "15-multimedia.sh"
+    "31-vscode.sh"
+    "32-docker.sh"
+)
 
-# Enable CRB and install EPEL
-dnf install -y 'dnf-command(config-manager)' epel-release
-dnf config-manager --set-enabled crb
-dnf upgrade -y epel-release
+# Copy files from system_files if the directory exists
+if [ -d "${CONTEXT_PATH}/system_files" ]; then
+    printf "::group:: ===== Copying files =====\n"
+    cp -avf "${CONTEXT_PATH}/system_files/." /
+    printf "::endgroup::\n"
+fi
 
-# Install gcc for brew (pulls kernel-headers)
-dnf -y --setopt=install_weak_deps=False install gcc
+# Install time for timing build scripts
+dnf -y install time
 
-echo "::endgroup::"
+for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f | sort --sort=human-numeric); do
+  base=$(basename "$script")
+  # Check if script is in EXCLUDE array
+  if [[ " ${EXCLUDE[@]} " =~ " ${base} " ]]; then
+    continue
+  fi
+  # Skip devtools if any kernel script will run (they call devtools themselves)
+  if [[ "$base" == "10-devtools.sh" ]]; then
+    for kernel_script in "${BUILD_SCRIPTS_PATH}"/05-kernel-*.sh; do
+      if [ -f "$kernel_script" ] && [[ ! " ${EXCLUDE[@]} " =~ " $(basename "$kernel_script") " ]]; then
+        continue 2  # Skip devtools and continue outer loop
+      fi
+    done
+  fi
+  printf "::group:: ===== ${base} =====\n"
+  /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "$(realpath "$script")"
+  printf "::endgroup::\n"
+done
 
-# Swap kernel (Hyperscale SIG)
-#bash "$(dirname "$0")/kernel_hsk.sh"
-
-# Swap kernel (Kmods SIG)
-#bash "$(dirname "$0")/kernel_kmods.sh"
-
-# Install desktop
-bash "$(dirname "$0")/desktop.sh"
-
-# Non-free multimedia codecs (mostly needed only for thumbnailing media files, as flatpaks have their own codecs)
-#bash "$(dirname "$0")/multimedia.sh"
-
-# Install packages
-bash "$(dirname "$0")/packages.sh"
-
-# Configure flatpaks
-bash "$(dirname "$0")/flatpak.sh"
-
-# Configure preferences
-bash "$(dirname "$0")/preferences.sh"
-
-# Enable/disable services
-bash "$(dirname "$0")/services.sh"
-
-# Configure plymouth and generate initramfs
-bash "$(dirname "$0")/initramfs.sh"
-
-echo "::group::🧹 CLEANUP"
-
-# Final cleanup
-dnf clean all
-find /var -mindepth 1 -maxdepth 1 ! -path '/var/cache' -delete 2>/dev/null || true
-find /var/cache -mindepth 1 ! -path '/var/cache/dnf*' -delete 2>/dev/null || true
-mkdir -p /var /boot
-
-# Make /usr/local writeable
-ln -s /var/usrlocal /usr/local
-
-echo "::endgroup::"
+# Make sure cleanup runs last
+printf "::group:: ===== Image Cleanup =====\n"
+/usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "${BUILD_SCRIPTS_PATH}/cleanup.sh"
+printf "::endgroup::\n"

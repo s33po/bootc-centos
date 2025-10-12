@@ -2,7 +2,7 @@
 
 set -xeuo pipefail
 
-echo "::group::📝 SYSTEM PREFERENCES"
+###### BASIC PREFERENCES AND TWEAKS ######
 
 # Disable lastlog display
 authselect enable-feature with-silent-lastlog
@@ -12,6 +12,33 @@ sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/syste
 sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
 sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
 sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
+
+###### FIREWALL CONFIGURATION ######
+
+# Write firewalld zone "Workstation" (more permissive than stock)
+mkdir -p /usr/lib/firewalld/zones
+cat > /usr/lib/firewalld/zones/Workstation.xml <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Workstation</short>
+  <description>Unsolicited incoming network packets are rejected from port 1 to 1024,
+except for select network services. Incoming packets that are related to
+outgoing network connections are accepted. Outgoing network connections are
+allowed.</description>
+  <service name="dhcpv6-client"/>
+  <service name="ssh"/>
+  <service name="samba-client"/>
+  <service name="dns"/>
+  <port protocol="udp" port="1025-65535"/>
+  <port protocol="tcp" port="1025-65535"/>
+  <forward/>
+</zone>
+EOF
+
+# Set default firewalld zone to "Workstation"
+firewall-offline-cmd --set-default-zone=Workstation
+
+###### GNOME SETTINGS ######
 
 # Set up dconf system profile
 mkdir -p /etc/dconf/profile
@@ -70,28 +97,7 @@ EOF
 # Apply dconf settings 
 dconf update
 
-# Write firewalld zone "Workstation" (more permissive than stock)
-mkdir -p /usr/lib/firewalld/zones
-cat > /usr/lib/firewalld/zones/Workstation.xml <<EOF
-<?xml version="1.0" encoding="utf-8"?>
-<zone>
-  <short>Workstation</short>
-  <description>Unsolicited incoming network packets are rejected from port 1 to 1024,
-except for select network services. Incoming packets that are related to
-outgoing network connections are accepted. Outgoing network connections are
-allowed.</description>
-  <service name="dhcpv6-client"/>
-  <service name="ssh"/>
-  <service name="samba-client"/>
-  <service name="dns"/>
-  <port protocol="udp" port="1025-65535"/>
-  <port protocol="tcp" port="1025-65535"/>
-  <forward/>
-</zone>
-EOF
-
-# Set default firewalld zone to "Workstation"
-firewall-offline-cmd --set-default-zone=Workstation
+###### ZSH ######
 
 # Set zsh as default shell for new users
 sed -i 's/bash/zsh/g' /etc/default/useradd
@@ -109,19 +115,27 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
 # Key bindings for better history navigation
-bindkey '^[[A' up-line-or-beginning-search    # Up arrow
-bindkey '^[[B' down-line-or-beginning-search  # Down arrow
+# Use terminfo if available for better terminal compatibility
+if (( ${+terminfo} )); then
+    bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search    # Up arrow
+    bindkey "${terminfo[kcud1]}" down-line-or-beginning-search  # Down arrow
+else
+    bindkey '^[[A' up-line-or-beginning-search    # Up arrow
+    bindkey '^[[B' down-line-or-beginning-search  # Down arrow
+fi
 bindkey '^P' up-line-or-beginning-search      # Ctrl+P
 bindkey '^N' down-line-or-beginning-search    # Ctrl+N
 
 # Completion settings
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+if [ -n "$LS_COLORS" ]; then
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+fi
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
 
 # Prompt with colors
-PROMPT='%F{green}%n%f@%F{magenta}%m%f %F{blue}%B%~%b%f %# '
+PROMPT='%F{green}%n%f@%F{cyan}%m%f %F{blue}%B%~%b%f %# '
 
 # History settings
 HISTFILE=~/.zsh_history
@@ -134,6 +148,7 @@ setopt HIST_IGNORE_SPACE         # Ignore commands starting with space
 setopt HIST_VERIFY               # Show command before executing from history
 setopt INC_APPEND_HISTORY        # Append immediately
 setopt SHARE_HISTORY             # Share history between sessions
+setopt HIST_REDUCE_BLANKS        # Remove extra blanks from history
 
 # Shell options
 setopt AUTO_CD                   # cd by typing directory name
@@ -143,6 +158,7 @@ setopt CORRECT                   # Try to correct commands
 setopt CORRECT_ALL               # Try to correct all arguments
 setopt INTERACTIVE_COMMENTS      # Allow comments in interactive shell
 setopt NO_BEEP                   # Don't beep on errors
+setopt AUTO_LIST                 # List choices on ambiguous completion
 
 # Aliases
 alias ls='ls --color=auto'
@@ -157,6 +173,5 @@ alias myip='curl ifconfig.me'
 alias fixperms='sudo chown -R $USER:$USER'
 alias please='sudo $(history | tail -1 | sed "s/^[[:space:]]*[0-9]*[[:space:]]*//")'
 alias defpaks='xargs -a /etc/flatpak/defpaks.list -r flatpak install -y --noninteractive flathub && echo "Flatpak installation complete!"'
+alias gamepaks='xargs -a /etc/flatpak/gaming.list -r flatpak install -y --noninteractive flathub && echo "Gaming Flatpak installation complete!"'
 EOF
-
-echo "::endgroup::"

@@ -2,8 +2,6 @@
 
 set -xeuo pipefail
 
-echo "::group::🧊 FLATPAK CONFIG"
-
 # Add Flathub
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub.org/repo/flathub.flatpakrepo"
@@ -31,4 +29,8 @@ it.mijorus.gearlever
 be.alexandervanhee.gradia
 EOF
 
-echo "::endgroup::"
+# Add gaming flatpaks to gaming.list
+tee /etc/flatpak/gaming.list <<EOF
+com.valvesoftware.Steam
+com.valvesoftware.Steam.CompatibilityTool.Proton-GE
+EOF

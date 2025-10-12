@@ -2,8 +2,6 @@
 
 set -xeuo pipefail
 
-echo "::group::🛠️ INITRAMFS GENERATION"
-
 # Configure dracut to include plymouth
 mkdir -p /etc/dracut.conf.d
 echo 'add_dracutmodules+=" plymouth "' > /etc/dracut.conf.d/plymouth.conf
@@ -28,5 +26,3 @@ EOF
 kernel=$(rpm -q kernel | sort -V | tail -n1 | sed 's/^kernel-//')
 /usr/bin/dracut --no-hostonly --kver "$kernel" --reproducible --zstd -v \
 --add ostree -f "/lib/modules/$kernel/initramfs.img"
-
-echo "::endgroup::"
