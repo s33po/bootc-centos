@@ -6,26 +6,33 @@ set -xeuo pipefail
 dnf -y copr enable @centoshyperscale/c10s-gnome-48
 dnf -y install glib2
 
-# Install "Workstation"
-# Includes GNOME and a basic set of packages for a desktop system
-dnf -y group install "Workstation"
+# Install only specific langpacks and for needed languages/locales etc. (edit for your own needs)
+# This saves some space and avoids installing hundreds of unneeded langpacks
+dnf -y install \
+    glibc-minimal-langpack \
+    glibc-langpack-{en,fi,ja}
 
-# Install specific langpacks and fonts only for needed languages/locales etc. (edit for your own needs)
-dnf -y --disableexcludes=all --setopt=install_weak_deps=False install \
-    glibc-langpack-{en,fi,ja} \
-    default-fonts-{core,other,cjk} \
-    google-noto-{sans-vf,serif-vf,mono-vf,sans-cjk-vf,serif-cjk-vf,emoji-fonts,color-emoji-fonts,fonts-common}
+# Install "Workstation" without browser and printing support (edit for your own needs)
+# Includes GNOME and a basic set of packages for a desktop system
+dnf -y group install --setopt=install_weak_deps=False \
+    "base-graphical" \
+    "Common NetworkManager submodules" \
+    "Core" \
+    "Fonts" \
+    "GNOME" \
+    "Guest Desktop Agents" \
+    "Hardware Support" \
+    "Multimedia" \
+    "Standard" \
+    "Workstation product core"  
 
 # Install basic support for image thumbnailing, previews and wallpapers
-dnf -y install --skip-broken --setopt=install_weak_deps=False \
+dnf -y install --setopt=install_weak_deps=False \
     avif-pixbuf-loader \
     gdk-pixbuf2-modules-extra \
     jxl-pixbuf-loader \
     libjxl \
     webp-pixbuf-loader
-
-# Remove fluff
-dnf -y remove console-login-helper-messages setroubleshoot
 
 # Disable HyperScale GNOME repo after desktop install
 dnf -y copr disable @centoshyperscale/c10s-gnome-48

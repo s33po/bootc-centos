@@ -4,3 +4,4 @@ output/
 *.qcow2
 _build_*
 *.iso
+build.log
