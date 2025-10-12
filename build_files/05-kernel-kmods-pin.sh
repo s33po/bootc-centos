@@ -12,11 +12,11 @@ TARGET_MAJOR_MINOR="6.16"
 # Capture old kernels before changes
 OLD_KERNELS=$(rpm -q kernel 2>/dev/null | sort -V || echo "")
 
+# Add Kmods SIG kernel repository
+dnf -y install centos-release-kmods-kernel 'dnf-command(versionlock)'
+
 # Clear any existing versionlocks
 dnf versionlock clear
-
-# Add Kmods SIG kernel repository
-dnf -y install centos-release-kmods-kernel
 
 # Find the newest target kernel version
 echo "--- Pinning Kernel to ${TARGET_MAJOR_MINOR}.x ---"

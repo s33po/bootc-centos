@@ -10,11 +10,11 @@ ARCH=$(uname -m)
 # Capture old kernels before changes
 OLD_KERNELS=$(rpm -q kernel 2>/dev/null | sort -V || echo "")
 
+# Add HyperScale kernel repository
+dnf -y install centos-release-hyperscale-kernel 'dnf-command(versionlock)'
+
 # Clear any existing versionlocks
 dnf versionlock clear
-
-# Add HyperScale kernel repository
-dnf -y install centos-release-hyperscale-kernel
 
 # Install the latest kernel and matching tools from HyperScale
 # Use noscripts to avoid failing initramfs scriptlets (we generate initramfs later manually)

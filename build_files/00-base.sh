@@ -2,9 +2,11 @@
 
 set -xeuo pipefail
 
-# Remove subscription-manager and install dnf commands
-dnf remove -y subscription-manager console-login-helper-messages
-dnf -y install 'dnf-command(config-manager)' 'dnf-command(versionlock)' time
+# Remove subscription-manager, install dnf-plugins, EPEL and enable CRB
+dnf -y remove subscription-manager console-login-helper-messages
+dnf -y install 'dnf-command(versionlock)' time epel-release
+dnf config-manager --set-enabled crb
+dnf -y upgrade epel-release
 
 # Set global dnf options
 dnf config-manager --save \
@@ -15,8 +17,3 @@ dnf config-manager --save \
         glibc-all-langpacks,cldr-emoji-annotation,ibus-typing-booster,gnome-shell-extension-background-logo,\
         centos-backgrounds,gnome-remote-desktop
     "
-    
-# Enable CRB and install EPEL
-dnf install -y 'dnf-command(config-manager)' epel-release
-dnf config-manager --set-enabled crb
-dnf upgrade -y epel-release

@@ -20,5 +20,3 @@ dnf -y install \
 	tmux \
 	fpaste \
     jetbrains-mono-fonts
-
-

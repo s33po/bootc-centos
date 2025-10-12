@@ -10,11 +10,11 @@ ARCH=$(uname -m)
 # Capture old kernels before changes
 OLD_KERNELS=$(rpm -q kernel 2>/dev/null | sort -V || echo "")
 
+# Add Kmods SIG LTS kernel repository (6.18 LTS)
+dnf -y install centos-release-kmods-kernel-6.18 'dnf-command(versionlock)'
+
 # Clear any existing versionlocks
 dnf versionlock clear
-
-# Add Kmods SIG LTS kernel repository (6.18 LTS)
-dnf -y install centos-release-kmods-kernel-6.18
 
 # Install the latest LTS kernel and matching tools
 # Use noscripts to avoid failing initramfs scriptlets (we generate initramfs later manually)
