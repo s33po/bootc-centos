@@ -1,6 +1,6 @@
 
 #!/usr/bin/env bash
-set -xeuo pipefail
+set -euo pipefail
 
 # Toggle timing of each script, set false/true to disable/enable
 TIME="${TIME:-false}"
@@ -32,6 +32,8 @@ EXCLUDE=(
   "32-docker.sh"
 )
 
+printf "::group:: ===== Discovering build scripts =====\n"
+
 # Build list of scripts to execute
 scripts_to_run=()
 
@@ -45,18 +47,28 @@ for kernel_script in "${BUILD_SCRIPTS_PATH}"/05-kernel-*.sh; do
   fi
 done
 
+echo "Kernel script will run: $kernel_script_will_run"
+echo "Excluded scripts: ${EXCLUDE[*]}"
+echo "Discovering scripts to execute..."
+
 for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f | sort --sort=human-numeric); do
   base=$(basename "$script")
   # Exclude listed scripts
   if [[ " ${EXCLUDE[@]} " =~ " ${base} " ]]; then
+    echo "Excluding: $base"
     continue
   fi
   # Only skip direct execution of devtools if kernel script will run (kernel scripts will run devtools.sh during kernel swap)
   if [[ "$base" == "10-devtools.sh" && "$kernel_script_will_run" == true ]]; then
+    echo "Skipping $base (will be run by kernel script)"
     continue
   fi
+  echo "Including: $base"
   scripts_to_run+=("$script")
 done
+
+echo "Scripts to execute: ${#scripts_to_run[@]} scripts"
+printf "::endgroup::\n"
 
 # Execute scripts
 for script in "${scripts_to_run[@]}"; do
