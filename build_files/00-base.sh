@@ -4,7 +4,7 @@ set -xeuo pipefail
 
 # Remove subscription-manager, install dnf-plugins, EPEL and enable CRB
 dnf -y remove subscription-manager console-login-helper-messages
-dnf -y install 'dnf-command(versionlock)' time epel-release
+dnf -y install 'dnf-command(versionlock)' epel-release
 dnf config-manager --set-enabled crb
 dnf -y upgrade epel-release
 

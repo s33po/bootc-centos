@@ -13,6 +13,15 @@ sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib
 sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
 sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
 
+###### JUST CONFIGURATION ######
+
+# Copy Justfile to image
+install -Dm644 /run/context/build_files/user.just /usr/share/just/user.just
+
+# Create global alias for user.just commands
+echo "alias jmain='just --justfile /usr/share/just/user.just'" > /etc/profile.d/jmain.sh
+chmod 644 /etc/profile.d/jmain.sh
+
 ###### FIREWALL CONFIGURATION ######
 
 # Write firewalld zone "Workstation" (more permissive than stock)
@@ -52,13 +61,6 @@ mkdir -p /etc/dconf/db/local.d
 cat <<EOF > /etc/dconf/db/local.d/00-gnome
 [org/gnome/desktop/interface]
 color-scheme='prefer-dark'
-gtk-theme='Adwaita'
-font-name='Adwaita Sans 11'
-document-font-name='Adwaita Sans 11'
-monospace-font-name='JetBrains Mono 12'
-icon-theme='Adwaita'
-cursor-theme='Adwaita'
-accent-color='blue'
 clock-format='24h'
 clock-show-weekday=true
 
@@ -88,90 +90,5 @@ default-folder-viewer='list-view'
 show-weekdate=true
 EOF
 
-# Mitigate cursor lag with VRR and make GNOME slightly faster(?)
-cat <<EOF >> /etc/environment
-MUTTER_DEBUG_FORCE_KMS_MODE=simple
-GNOME_SHELL_SLOWDOWN_FACTOR=0.8
-EOF
-
 # Apply dconf settings 
 dconf update
-
-###### ZSH ######
-
-# Set zsh as default shell for new users
-sed -i 's/bash/zsh/g' /etc/default/useradd
-
-# Set default zsh config
-mkdir -p /etc/skel
-cat > /etc/skel/.zshrc << 'EOF'
-# Completion system
-autoload -Uz compinit promptinit up-line-or-beginning-search down-line-or-beginning-search
-promptinit
-compinit
-
-# History search widgets
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-
-# Key bindings for better history navigation
-# Use terminfo if available for better terminal compatibility
-if (( ${+terminfo} )); then
-    bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search    # Up arrow
-    bindkey "${terminfo[kcud1]}" down-line-or-beginning-search  # Down arrow
-else
-    bindkey '^[[A' up-line-or-beginning-search    # Up arrow
-    bindkey '^[[B' down-line-or-beginning-search  # Down arrow
-fi
-bindkey '^P' up-line-or-beginning-search      # Ctrl+P
-bindkey '^N' down-line-or-beginning-search    # Ctrl+N
-
-# Completion settings
-zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-if [ -n "$LS_COLORS" ]; then
-    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-fi
-zstyle ':completion:*' completer _expand _complete _ignored _approximate
-
-# Prompt with colors
-PROMPT='%F{green}%n%f@%F{cyan}%m%f %F{blue}%B%~%b%f %# '
-
-# History settings
-HISTFILE=~/.zsh_history
-HISTSIZE=99999
-SAVEHIST=$HISTSIZE
-setopt EXTENDED_HISTORY          # Save timestamp and duration
-setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicates first
-setopt HIST_IGNORE_DUPS          # Ignore consecutive duplicates
-setopt HIST_IGNORE_SPACE         # Ignore commands starting with space
-setopt HIST_VERIFY               # Show command before executing from history
-setopt INC_APPEND_HISTORY        # Append immediately
-setopt SHARE_HISTORY             # Share history between sessions
-setopt HIST_REDUCE_BLANKS        # Remove extra blanks from history
-
-# Shell options
-setopt AUTO_CD                   # cd by typing directory name
-setopt AUTO_PUSHD                # Push directories to stack
-setopt PUSHD_IGNORE_DUPS         # Don't push duplicates
-setopt CORRECT                   # Try to correct commands
-setopt CORRECT_ALL               # Try to correct all arguments
-setopt INTERACTIVE_COMMENTS      # Allow comments in interactive shell
-setopt NO_BEEP                   # Don't beep on errors
-setopt AUTO_LIST                 # List choices on ambiguous completion
-
-# Aliases
-alias ls='ls --color=auto'
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias grep='grep --color=auto'
-alias diff='diff --color=auto'
-alias myip='curl ifconfig.me'
-alias fixperms='sudo chown -R $USER:$USER'
-alias please='sudo $(history | tail -1 | sed "s/^[[:space:]]*[0-9]*[[:space:]]*//")'
-alias defpaks='xargs -a /etc/flatpak/defpaks.list -r flatpak install -y --noninteractive flathub && echo "Flatpak installation complete!"'
-alias gamepaks='xargs -a /etc/flatpak/gaming.list -r flatpak install -y --noninteractive flathub && echo "Gaming Flatpak installation complete!"'
-EOF

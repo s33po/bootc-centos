@@ -2,7 +2,7 @@
 
 set -xeuo pipefail
 
-# Configure dracut to include plymouth
+# Add plymouth module
 mkdir -p /etc/dracut.conf.d
 echo 'add_dracutmodules+=" plymouth "' > /etc/dracut.conf.d/plymouth.conf
 

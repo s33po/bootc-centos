@@ -1,56 +1,80 @@
-#!/usr/bin/env bash
 
+#!/usr/bin/env bash
 set -xeuo pipefail
+
+# Toggle timing of each script, set false/true to disable/enable
+TIME="${TIME:-false}"
+# Install 'time' if not present and timing is enabled
+if [[ "$TIME" == "true" ]]; then
+  if ! command -v /usr/bin/time >/dev/null 2>&1; then
+    dnf install -y time
+  fi
+fi
 
 CONTEXT_PATH="$(realpath "$(dirname "$0")/..")"
 BUILD_SCRIPTS_PATH="$(realpath "$(dirname "$0")")"
 
-## This script is made to be modular so you can exclude certain scripts as needed.
-## For example, if you don't want to swap the kernel, exclude ALL kernel swap scripts.
-## If you don't want to install non-free multimedia packages, exclude the multimedia script etc.
-
-# List of scripts to EXCLUDE
-EXCLUDE=(
-    "05-kernel-hsk.sh"
-    "05-kernel-kmods-pin.sh"
-    "05-kernel-kmods-lts.sh"
-    "11-virtualization.sh"
-    "25-multimedia.sh"
-    "31-vscode.sh"
-    "32-docker.sh"
-)
-
 # Copy files from system_files if the directory exists
 if [ -d "${CONTEXT_PATH}/system_files" ]; then
-    printf "::group:: ===== Copying files =====\n"
-    cp -avf "${CONTEXT_PATH}/system_files/." /
-    printf "::endgroup::\n"
+  printf "::group:: ===== Copying files =====\n"
+  cp -avf "${CONTEXT_PATH}/system_files/." /
+  printf "::endgroup::\n"
 fi
+
+# List of build scripts to EXCLUDE
+EXCLUDE=(
+  "05-kernel-hsk.sh"
+  "05-kernel-kmods-pin.sh"
+  "05-kernel-kmods-lts.sh"
+  "11-virtualization.sh"
+  "25-multimedia.sh"
+  "31-vscode.sh"
+  "32-docker.sh"
+)
+
+# Build list of scripts to execute
+scripts_to_run=()
+
+# Determine if any kernel script will run
+kernel_script_will_run=false
+for kernel_script in "${BUILD_SCRIPTS_PATH}"/05-kernel-*.sh; do
+  base=$(basename "$kernel_script")
+  if [ -f "$kernel_script" ] && [[ ! " ${EXCLUDE[@]} " =~ " ${base} " ]]; then
+    kernel_script_will_run=true
+    break
+  fi
+done
 
 for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f | sort --sort=human-numeric); do
   base=$(basename "$script")
-  # Check if script is in EXCLUDE array
+  # Exclude listed scripts
   if [[ " ${EXCLUDE[@]} " =~ " ${base} " ]]; then
     continue
   fi
-  # Skip devtools if any kernel script will run (they call devtools themselves)
-  if [[ "$base" == "10-devtools.sh" ]]; then
-    for kernel_script in "${BUILD_SCRIPTS_PATH}"/05-kernel-*.sh; do
-      if [ -f "$kernel_script" ] && [[ ! " ${EXCLUDE[@]} " =~ " $(basename "$kernel_script") " ]]; then
-        continue 2  # Skip devtools and continue outer loop
-      fi
-    done
+  # Only skip direct execution of devtools if kernel script will run (kernel scripts will run devtools.sh during kernel swap)
+  if [[ "$base" == "10-devtools.sh" && "$kernel_script_will_run" == true ]]; then
+    continue
   fi
+  scripts_to_run+=("$script")
+done
+
+# Execute scripts
+for script in "${scripts_to_run[@]}"; do
+  base=$(basename "$script")
   printf "::group:: ===== ${base} =====\n"
-  if command -v /usr/bin/time >/dev/null 2>&1; then
-      /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "$(realpath "$script")"
+  if [[ "$TIME" == "true" ]]; then
+    /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "$(realpath "$script")"
   else
-      "$(realpath "$script")"
+    "$(realpath "$script")"
   fi
   printf "::endgroup::\n"
 done
 
 # Make sure cleanup runs last
 printf "::group:: ===== Image Cleanup =====\n"
-/usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "${BUILD_SCRIPTS_PATH}/cleanup.sh"
+if [[ "$TIME" == "true" ]]; then
+  /usr/bin/time -f "\n===== ::notice::[TIME] %C took %E =====\n" "${BUILD_SCRIPTS_PATH}/cleanup.sh"
+else
+  "${BUILD_SCRIPTS_PATH}/cleanup.sh"
+fi
 printf "::endgroup::\n"

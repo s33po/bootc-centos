@@ -8,7 +8,7 @@ dnf -y upgrade glib2
 
 # Install only specific langpacks for needed languages/locales etc. (edit for your own needs)
 # This makes final image smaller and saves some build time/bandwidth
-dnf -y install glibc-langpack-{en,fi,ja}
+dnf -y install glibc-langpack-{en,fi}
 
 # Install "Workstation" without default fonts, browser and printing support (edit for your own needs)
 # Includes GNOME and a basic set of packages for a desktop system

@@ -6,17 +6,18 @@ An opinionated atomic workstation based on the CentOS Stream 10 `bootc` image.
 
 - Backported GNOME 48 from the CentOS Hyperscale SIG  
 - Trimmed "Workstation" install  
-- Small set of opinionated tools and utilities  
+- Small set of basic tools and utilities  
 - Basic support for image thumbnailing, previews, etc.  
 - Some pre-configured system-wide settings  
 - Flathub enabled by default:  
-    - Firefox ESR not installed in favor of the Flatpak version  
-    - Alias `defpaks` to install default flatpaks  
+    - Firefox ESR and Loupe not installed in favor of the Flatpak version  
+- Justfile and `jmain` alias for some basic system maintenance and configuration
+    - `jmain list` to view available commands
 
-### `build_files`:
+### `build_files:`
 
 - Modular design; specific build scripts can be excluded in `build.sh`  
-- All build scripts are tracked with `time`  
+- Toggleable env to track build scripts with `time`   
 - Global package exclusion and DNF settings can be configured in `00-base.sh`  
 
 - Optional build scripts for:  
@@ -25,15 +26,14 @@ An opinionated atomic workstation based on the CentOS Stream 10 `bootc` image.
     - Virtualization support  
     - VSCode and/or Docker installation  
 
-- "Workstation" install with opinionated trimmings:  
-    - Fully functional GNOME desktop with required packages for general desktop use  
+- Trimmed desktop install:  
+    - Fully functional GNOME desktop with required packages for general desktop use 
     - Minimal set of fonts  
     - Minimal set of language packs  
     - No printing support  
-    - Some unnecessary packages excluded or removed  
+    - Some packages excluded or removed  
 
-
-These trimmings reduce a fair amount of build time and bandwidth, and make the final image a few hundred MBs smaller (which speeds up rechunker and pushing to GHCR in CI). As this image is built solely for personal use, there is no need to include comprehensive language or localisation support. Fonts can be installed and updated locally, so there is no reason to include them in every image.
+These trimmings reduce a fair amount of build time and bandwidth, and make the final image a few hundred MB smaller (which speeds up rechunker and pushing to GHCR in CI). As this image is built solely for personal use, there is no need to include comprehensive language or localization support. Fonts can be installed and updated locally, so there is no reason to include them in *every* image.
 
 &nbsp;<br>
 
