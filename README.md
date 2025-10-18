@@ -1,54 +1,30 @@
 ## Bootc CentOS Workstation
 
-An opinionated atomic workstation based on the CentOS Stream 10 `bootc` image.
+An atomic workstation built on the CentOS Stream 10 `bootc` image.
 
-### Currently building image: `bootc-centos:latest`
+### Currently Building Image: `bootc-centos:latest`
 
 - Backported GNOME 48 from the CentOS Hyperscale SIG  
-- Trimmed "Workstation" install  
-- Small set of basic tools and utilities  
-- Basic support for image thumbnailing, previews, etc.  
-- Some pre-configured system-wide settings  
-- Flathub enabled by default:  
-    - Firefox ESR and Loupe not installed in favor of the Flatpak version  
-- Justfile and `jmain` alias for some basic system maintenance and configuration
-    - `jmain --list` to view available commands
-
-### `build_files:`
-
-- Modular design; specific build scripts can be excluded in `build.sh`  
-- Toggleable env to track build scripts with `time`   
-- Global package exclusion and DNF settings can be configured in `00-base.sh`  
-
-- Optional build scripts for:  
-    - Kernel swap (latest Hyperscale kernel, pinned kmods mainline kernel, or kmods LTS kernel - 6.18 not available yet)  
-    - Non-free media codecs (from Negativo17)  
-    - Virtualization support  
-    - VSCode and/or Docker installation  
-
-- Trimmed desktop install:  
-    - Fully functional GNOME desktop with required packages for general desktop use 
-    - Minimal set of fonts  
-    - Minimal set of language packs  
-    - No printing support  
-    - Some packages excluded or removed  
-
-These trimmings reduce a fair amount of build time and bandwidth, and make the final image a few hundred MB smaller (which speeds up rechunker and pushing to GHCR in CI). As this image is built solely for personal use, there is no need to include comprehensive language or localization support. Fonts can be installed and updated locally, so there is no reason to include them in *every* image.
+- Customized "Workstation" installation:
+    - Minimal set of fonts and language packs
+    - Printing support removed
+    - Some packages excluded in favor of Flatpak versions
+- Small set of basic tools and utilities, including GCC for Homebrew
+- Basic support for image thumbnailing and previews
+- Some pre-configured system-wide settings   
+- Justfile and `jmain` alias for initial configuration and basic system maintenance
+- Modular build files for easy image customization
 
 &nbsp;<br>
 
-### ⚠️ This image is intended only for my personal use ⚠️
+### This image is intended only for my personal use ⚠️
 
-While functional, it should be considered experimental.
-
-I may change installed packages, kernel, or preferences at any time. Use at your own risk.
-
-I strongly recommend forking the repo and building your own image, or using a larger community project instead.
+While functional, it should be considered experimental. Use at your own risk.
 
 &nbsp;<br>
 
 ---
-&nbsp;<br>
+
 
 <p align="center">
 <strong><font size="+1">Inspired by:</font></strong><br>
