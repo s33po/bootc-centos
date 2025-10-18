@@ -103,13 +103,11 @@ jobs:
 
       - name: Load rechunked image and tag
         run: |
-          set -euo pipefail
-          IMAGE_REF="${{ steps.rechunk.outputs.ref }}"
-          podman pull "$IMAGE_REF"
+          IMAGE=$(podman pull ${{ steps.rechunk.outputs.ref }})
+          sudo rm -rf ${{ steps.rechunk.outputs.location }}
           for tag in ${{ steps.metadata.outputs.tags }}; do
-            podman tag "$IMAGE_REF" ${{ env.IMAGE_NAME }}:$tag
+            podman tag $IMAGE ${{ env.IMAGE_NAME }}:$tag
           done
-          sudo rm -rf "${{ steps.rechunk.outputs.location }}"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
