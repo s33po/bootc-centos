@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-  - cron: '00 06 * * 6'  # 06:00am UTC every Saturday
+  - cron: '00 03 * * 6'  # 03:00am UTC every Saturday
   merge_group:  
   push:
     branches:
@@ -86,6 +86,7 @@ jobs:
         id: build-image
         shell: bash
         run: |
+          set -euo pipefail
           just=$(which just)
           sudo $just build "${IMAGE_NAME}" "${DEFAULT_TAG}"
 
@@ -100,13 +101,15 @@ jobs:
           version: ${{ env.MAJOR_VERSION }}
           labels: ${{ steps.metadata.outputs.labels }} 
 
-      - name: Load in podman and tag
+      - name: Load rechunked image and tag
         run: |
-          IMAGE=$(podman pull ${{ steps.rechunk.outputs.ref }})
-          sudo rm -rf ${{ steps.rechunk.outputs.location }}
+          set -euo pipefail
+          IMAGE_REF="${{ steps.rechunk.outputs.ref }}"
+          podman pull "$IMAGE_REF"
           for tag in ${{ steps.metadata.outputs.tags }}; do
-            podman tag $IMAGE ${{ env.IMAGE_NAME }}:$tag
+            podman tag "$IMAGE_REF" ${{ env.IMAGE_NAME }}:$tag
           done
+          sudo rm -rf "${{ steps.rechunk.outputs.location }}"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
