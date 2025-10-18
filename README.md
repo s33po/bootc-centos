@@ -12,7 +12,7 @@ An opinionated atomic workstation based on the CentOS Stream 10 `bootc` image.
 - Flathub enabled by default:  
     - Firefox ESR and Loupe not installed in favor of the Flatpak version  
 - Justfile and `jmain` alias for some basic system maintenance and configuration
-    - `jmain list` to view available commands
+    - `jmain --list` to view available commands
 
 ### `build_files:`
 
@@ -21,7 +21,7 @@ An opinionated atomic workstation based on the CentOS Stream 10 `bootc` image.
 - Global package exclusion and DNF settings can be configured in `00-base.sh`  
 
 - Optional build scripts for:  
-    - Kernel swap (latest Hyperscale kernel, pinned kmods mainline kernel, or kmods LTS kernel — 6.18 not available yet)  
+    - Kernel swap (latest Hyperscale kernel, pinned kmods mainline kernel, or kmods LTS kernel - 6.18 not available yet)  
     - Non-free media codecs (from Negativo17)  
     - Virtualization support  
     - VSCode and/or Docker installation  

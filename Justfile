@@ -1,12 +1,8 @@
-export repo_organization := env("GITHUB_REPOSITORY_OWNER", "s33po")
+export repo_owner := env("GITHUB_REPOSITORY_OWNER", "s33po")
 export image_name := env("IMAGE_NAME", "bootc-centos")
-export centos_version := env("CENTOS_VERSION", "10")
+export major_version := env("MAJOR_VERSION", "10")
 export default_tag := env("DEFAULT_TAG", "latest")
 export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest")
-
-alias build-vm := build-qcow2
-alias rebuild-vm := rebuild-qcow2
-alias run-vm := run-vm-qcow2
 
 [private]
 default:
@@ -73,12 +69,12 @@ build $target_image=image_name $tag=default_tag:
     #!/usr/bin/env bash
 
     # Get Version
-    ver="${tag}-${centos_version}.$(date +%Y%m%d)"
+    ver="${tag}-${major_version}.$(date +%Y%m%d)"
 
     BUILD_ARGS=()
-    BUILD_ARGS+=("--build-arg" "MAJOR_VERSION=${centos_version}")
+    BUILD_ARGS+=("--build-arg" "MAJOR_VERSION=${major_version}")
     BUILD_ARGS+=("--build-arg" "IMAGE_NAME=${image_name}")
-    BUILD_ARGS+=("--build-arg" "IMAGE_VENDOR=${repo_organization}")
+    BUILD_ARGS+=("--build-arg" "IMAGE_VENDOR=${repo_owner}")
     if [[ -z "$(git status -s)" ]]; then
         BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$(git rev-parse --short HEAD)")
     fi
@@ -129,10 +125,25 @@ _build-bib $target_image $tag $type $config: (_rootful_load_image target_image t
       sudo rm -rf "output/${type}" || true
     fi
 
-    args="--type ${type}"
+    args="--type ${type} --progress=verbose"
 
     if [[ $target_image == localhost/* ]]; then
       args+=" --local"
+    fi
+
+    # Add librepo flag for ISO builds
+    if [[ $type == iso ]]; then
+      args+=" --use-librepo=True"
+    fi
+
+    # Handle template processing for ISO builds
+    if [[ $type == iso ]]; then
+      ISO_CONFIG="$(mktemp)"
+      export TARGET_IMAGE="${target_image}:${tag}"
+      envsubst < "${config}" > "${ISO_CONFIG}"
+      config_mount="${ISO_CONFIG}:/config.toml:ro"
+    else
+      config_mount="$(pwd)/${config}:/config.toml:ro"
     fi
 
     sudo podman run \
@@ -142,113 +153,30 @@ _build-bib $target_image $tag $type $config: (_rootful_load_image target_image t
       --pull=newer \
       --net=host \
       --security-opt label=type:unconfined_t \
-      -v $(pwd)/${config}:/config.toml:ro \
+      -v "${config_mount}" \
       -v $(pwd)/output:/output \
       -v /var/lib/containers/storage:/var/lib/containers/storage \
       "${bib_image}" \
       ${args} \
       "${target_image}"
 
+    # Clean up temporary ISO config if created
+    if [[ $type == iso && -n "${ISO_CONFIG:-}" ]]; then
+      rm -f "${ISO_CONFIG}"
+    fi
+
     sudo chown -R $USER:$USER output
 
 _rebuild-bib $target_image $tag $type $config: (build target_image tag) && (_build-bib target_image tag type config)
 
-[group('Build Virtal Machine Image')]
-build-qcow2 $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "qcow2" "image-builder.config.toml")
+[group('Build VM Image')]
+build-vm $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "qcow2" "bib-config.toml")
 
-[group('Build Virtal Machine Image')]
-build-raw $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "raw" "image-builder.config.toml")
+[group('Build VM Image')]
+rebuild-vm $target_image=("localhost/" + image_name) $tag=default_tag: && (_rebuild-bib target_image tag "qcow2" "bib-config.toml")
 
-[group('Build Virtal Machine Image')]
-build-iso $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "iso" "image-builder-iso.config.toml")
+[group('Build Installer')]
+build-iso $target_image=("ghcr.io/" + repo_owner + "/" + image_name) $tag=default_tag: && (_build-bib target_image tag "iso" "bib-iso-config.toml")
 
-[group('Build Virtal Machine Image')]
-rebuild-qcow2 $target_image=("localhost/" + image_name) $tag=default_tag: && (_rebuild-bib target_image tag "qcow2" "image-builder.config.toml")
-
-[group('Build Virtal Machine Image')]
-rebuild-raw $target_image=("localhost/" + image_name) $tag=default_tag: && (_rebuild-bib target_image tag "raw" "image-builder.config.toml")
-
-[group('Build Virtal Machine Image')]
-rebuild-iso $target_image=("localhost/" + image_name) $tag=default_tag: && (_rebuild-bib target_image tag "iso" "image-builder-iso.config.toml")
-
-_run-vm $target_image $tag $type $config:
-    #!/usr/bin/bash
-    set -eoux pipefail
-
-    image_file="output/${type}/disk.${type}"
-
-    if [[ $type == iso ]]; then
-        image_file="output/bootiso/install.iso"
-    fi
-
-    if [[ ! -f "${image_file}" ]]; then
-        just "build-${type}" "$target_image" "$tag"
-    fi
-
-    # Determine which port to use
-    port=8006;
-    while grep -q :${port} <<< $(ss -tunalp); do
-        port=$(( port + 1 ))
-    done
-    echo "Using Port: ${port}"
-    echo "Connect to http://localhost:${port}"
-    run_args=()
-    run_args+=(--rm --privileged)
-    run_args+=(--pull=newer)
-    run_args+=(--publish "127.0.0.1:${port}:8006")
-    run_args+=(--env "CPU_CORES=4")
-    run_args+=(--env "RAM_SIZE=8G")
-    run_args+=(--env "DISK_SIZE=64G")
-    # run_args+=(--env "BOOT_MODE=windows_secure")
-    run_args+=(--env "TPM=Y")
-    run_args+=(--env "GPU=Y")
-    run_args+=(--device=/dev/kvm)
-    run_args+=(--volume "${PWD}/${image_file}":"/boot.${type}")
-    run_args+=(docker.io/qemux/qemu-docker)
-    podman run "${run_args[@]}" &
-    xdg-open http://localhost:${port}
-    fg "%podman"
-
-[group('Run Virtal Machine')]
-run-vm-qcow2 $target_image=("localhost/" + image_name) $tag=default_tag: && (_run-vm target_image tag "qcow2" "image-builder.config.toml")
-
-[group('Run Virtal Machine')]
-run-vm-raw $target_image=("localhost/" + image_name) $tag=default_tag: && (_run-vm target_image tag "raw" "image-builder.config.toml")
-
-[group('Run Virtal Machine')]
-run-vm-iso $target_image=("localhost/" + image_name) $tag=default_tag: && (_run-vm target_image tag "iso" "image-builder-iso.config.toml")
-
-[group('Run Virtal Machine')]
-spawn-vm rebuild="0" type="qcow2" ram="6GiB":
-    #!/usr/bin/env bash
-
-    set -euo pipefail
-
-    [ "{{ rebuild }}" -eq 1 ] && echo "Rebuilding the ISO" && just build-vm {{ rebuild }} {{ type }}
-
-    systemd-vmspawn \
-      -M "bootc-centos" \
-      --console=gui \
-      --cpus=2 \
-      --ram=$(echo 6G| /usr/bin/numfmt --from=iec) \
-      --network-user-mode \
-      --vsock=false --pass-ssh-key=false \
-      -i ./output/**/*.{{ type }}
-
-customize-iso-build override="0" iso_path="output/final.iso":
-    sudo podman run \
-    --rm -it \
-    --privileged \
-    --pull=newer \
-    --net=host \
-    --security-opt label=type:unconfined_t \
-    -v $(pwd)/image-builder-iso.config.toml \
-    -v $(pwd)/output:/output \
-    -v /var/lib/containers/storage:/var/lib/containers/storage \
-    --entrypoint "" \
-    "${bib_image}" \
-    osbuild --store /store --output-directory /output /output/manifest-iso.json  --export bootiso
-
-    if [ {{ override }} -ne 0 ] ; then
-    mv output/final.iso {{ iso_path }}
-    fi
+[group('Build Installer')]
+rebuild-iso $target_image=("ghcr.io/" + repo_owner + "/" + image_name) $tag=default_tag: && (_rebuild-bib target_image tag "iso" "bib-iso-config.toml")
