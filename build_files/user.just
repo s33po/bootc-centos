@@ -12,19 +12,11 @@ update:
 
     # Update system
     echo "Updating system..."
-    if command -v bootc &> /dev/null; then
-        echo "Using bootc to update..."
-        sudo bootc upgrade
-    else
-        echo "bootc not found"
-        exit 1
-    fi
+    sudo bootc upgrade
 
     # Update flatpaks
-    if command -v flatpak &> /dev/null; then
-        echo "Updating Flatpaks..."
-        flatpak update -y
-    fi
+    echo "Updating Flatpaks..."
+    flatpak update -y
 
     # Update homebrew
     if command -v brew &> /dev/null; then
@@ -99,7 +91,6 @@ cleanup-system:
     # Clean user cache
     echo "Cleaning user cache directories..."
     rm -rf ~/.cache/thumbnails/*
-    rm -rf ~/.cache/mozilla/*
 
     # Clean logs
     echo "Cleaning old journal logs..."
@@ -294,6 +285,26 @@ update-brew:
     echo "Updating Homebrew..."
     brew update && brew upgrade && brew cleanup
     echo "Homebrew update completed!"
+
+# Install full Fonts group to user directory for comprehensive font coverage
+[group('System')]
+install-fonts:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo bootc usr-overlay
+    
+    echo "Installing fonts..."  
+    sudo dnf -y group install "Fonts"
+
+    echo "Copying fonts to ~/.local/share/fonts..."
+    mkdir -p ~/.local/share/fonts
+    cp -rv /usr/share/fonts/* ~/.local/share/fonts/
+
+    echo "Updating font cache..."
+    fc-cache -fv ~/.local/share/fonts
+    echo ""
+    echo "Fonts installed to user directory!"
+    echo "To see installed fonts: fc-list"
 
 # Show this help message
 [group('Help')]
