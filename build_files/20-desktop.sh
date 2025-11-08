@@ -10,12 +10,14 @@ dnf -y upgrade glib2
 # This saves +200 MB compared to installing the full 'glibc-all-langpacks'
 dnf -y install glibc-langpack-{en,fi}
 
-# Install small set of fonts for system UI, terminal, basic document and web compatibility
+# Install smallish set of basic fonts for system UI, terminal, basic document and web compatibility
 # This saves +100 MB compared to installing the full "Fonts" group (you can install more fonts locally)
 dnf -y install --setopt=install_weak_deps=False \
     google-noto-sans-fonts \
     liberation-fonts \
     dejavu-sans-fonts \
+    fira-code-fonts \
+    jetbrains-mono-fonts \
     redhat-display-vf-fonts
 
 # Install "Workstation" without default fonts, browser and printing support (edit for your own needs)
