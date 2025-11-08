@@ -2,6 +2,9 @@
 
 set -xeuo pipefail
 
+# Install flatpak
+dnf install -y flatpak
+
 # Add Flathub
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub.org/repo/flathub.flatpakrepo"
