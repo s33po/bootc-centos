@@ -3,7 +3,7 @@
 set -xeuo pipefail
 
 # Enable services
-systemctl enable gdm.service
+systemctl enable sddm.service
 systemctl enable bootc-fetch-apply-updates.timer
 systemctl enable firewalld
 systemctl enable podman.socket

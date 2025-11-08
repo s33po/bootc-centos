@@ -11,7 +11,6 @@ authselect enable-feature with-silent-lastlog
 sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
 sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
 sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
-sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
 
 ###### JUST CONFIGURATION ######
 
@@ -47,48 +46,48 @@ EOF
 # Set default firewalld zone to "Workstation"
 firewall-offline-cmd --set-default-zone=Workstation
 
-###### GNOME SETTINGS ######
+# ###### GNOME SETTINGS ######
 
-# Set up dconf system profile
-mkdir -p /etc/dconf/profile
-cat <<EOF > /etc/dconf/profile/user
-user-db:user
-system-db:local
-EOF
+# # Set up dconf system profile
+# mkdir -p /etc/dconf/profile
+# cat <<EOF > /etc/dconf/profile/user
+# user-db:user
+# system-db:local
+# EOF
 
-# Set GNOME system-wide defaults
-mkdir -p /etc/dconf/db/local.d
-cat <<EOF > /etc/dconf/db/local.d/00-gnome
-[org/gnome/desktop/interface]
-color-scheme='prefer-dark'
-clock-format='24h'
-clock-show-weekday=true
+# # Set GNOME system-wide defaults
+# mkdir -p /etc/dconf/db/local.d
+# cat <<EOF > /etc/dconf/db/local.d/00-gnome
+# [org/gnome/desktop/interface]
+# color-scheme='prefer-dark'
+# clock-format='24h'
+# clock-show-weekday=true
 
-[org/gnome/desktop/wm/preferences]
-button-layout='appmenu:minimize,maximize,close'
-center-new-windows=true
+# [org/gnome/desktop/wm/preferences]
+# button-layout='appmenu:minimize,maximize,close'
+# center-new-windows=true
 
-[org/gnome/desktop/peripherals/mouse]
-accel-profile='flat'
+# [org/gnome/desktop/peripherals/mouse]
+# accel-profile='flat'
 
-[org/gnome/shell]
-enable-hot-corners=false
+# [org/gnome/shell]
+# enable-hot-corners=false
 
-[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings]
-custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
+# [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings]
+# custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
 
-[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
-name='Launch Ptyxis'
-binding='<Super>Return'
-command='/usr/bin/ptyxis --new-window'
+# [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+# name='Launch Ptyxis'
+# binding='<Super>Return'
+# command='/usr/bin/ptyxis --new-window'
 
-[org/gnome/nautilus/preferences]
-sort-directories-first=true
-default-folder-viewer='list-view'
+# [org/gnome/nautilus/preferences]
+# sort-directories-first=true
+# default-folder-viewer='list-view'
 
-[org/gnome/desktop/calendar]
-show-weekdate=true
-EOF
+# [org/gnome/desktop/calendar]
+# show-weekdate=true
+# EOF
 
-# Apply dconf settings 
-dconf update
+# # Apply dconf settings 
+# dconf update

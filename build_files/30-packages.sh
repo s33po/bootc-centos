@@ -18,4 +18,9 @@ dnf -y install \
 	zsh \
 	fzf \
 	tmux \
-	fpaste
+	fpaste \
+	kcalc \
+	kolourpaint \
+	okular \
+	kate \
+	filelight

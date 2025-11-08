@@ -2,10 +2,6 @@
 
 set -xeuo pipefail
 
-# Backported GNOME 48 from HyperScale SIG
-dnf -y copr enable @centoshyperscale/c10s-gnome-48
-dnf -y upgrade glib2
-
 # Install only specific langpacks for needed languages/locales (edit for your own needs)
 # This saves +200 MB compared to installing the full 'glibc-all-langpacks'
 dnf -y install glibc-langpack-{en,fi}
@@ -20,19 +16,21 @@ dnf -y install --setopt=install_weak_deps=False \
     jetbrains-mono-fonts \
     redhat-display-vf-fonts
 
-# Install "Workstation" without default fonts, browser and printing support (edit for your own needs)
-# Includes GNOME and a basic set of packages for a desktop system
+# Install "KDE Plasma Workspaces" without default fonts, browser, dial-up support and printing support (edit for your own needs)
+# Includes KDE Plasma and a basic set of packages for a desktop system
 # Excluding "Printing client" (if you dont need it) saves about 100 MB
 dnf -y group install --setopt=install_weak_deps=False \
     "base-graphical" \
     "Common NetworkManager submodules" \
     "Core" \
-    "GNOME" \
+    "KDE" \
     "Guest Desktop Agents" \
     "Hardware Support" \
     "Multimedia" \
     "Standard" \
-    "Workstation product core"  
+    "Workstation product core" \
+    "Desktop accessibility" \
+    "Input Methods"
 
 # Install basic support for image thumbnailing, previews and wallpapers
 dnf -y install --setopt=install_weak_deps=False \
@@ -41,6 +39,3 @@ dnf -y install --setopt=install_weak_deps=False \
     jxl-pixbuf-loader \
     libjxl \
     webp-pixbuf-loader
-
-# Disable HyperScale GNOME repo after desktop install
-dnf -y copr disable @centoshyperscale/c10s-gnome-48
