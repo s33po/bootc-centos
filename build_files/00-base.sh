@@ -15,5 +15,5 @@ dnf config-manager --save \
         PackageKit,PackageKit-command-not-found,rootfiles,redhat-flatpak-repo,setroubleshoot,\
         firefox,loupe,gnome-characters,gnome-font-viewer,gnome-user-docs,\
         glibc-all-langpacks,cldr-emoji-annotation,ibus-typing-booster,gnome-shell-extension-background-logo,\
-        centos-backgrounds,gnome-remote-desktop
+        centos-backgrounds,gnome-remote-desktop,libsane-hpaio,sane-backends-drivers-scanners,yelp-tools,NetworkManager-adsl
     "
