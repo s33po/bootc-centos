@@ -8,29 +8,38 @@ dnf -y install glibc-langpack-{en,fi}
 
 # Install smallish set of basic fonts for system UI, terminal, basic document and web compatibility
 # This saves +100 MB compared to installing the full "Fonts" group (you can install more fonts locally)
-dnf -y install --setopt=install_weak_deps=False \
-    google-noto-sans-fonts \
-    liberation-fonts \
-    dejavu-sans-fonts \
-    fira-code-fonts \
-    jetbrains-mono-fonts \
-    redhat-display-vf-fonts
+# dnf -y install --setopt=install_weak_deps=False \
+#     google-noto-sans-fonts \
+#     liberation-fonts \
+#     dejavu-sans-fonts \
+#     fira-code-fonts \
+#     jetbrains-mono-fonts \
+#     redhat-display-vf-fonts
 
 # Install "KDE Plasma Workspaces" without default fonts, browser, dial-up support and printing support (edit for your own needs)
 # Includes KDE Plasma and a basic set of packages for a desktop system
 # Excluding "Printing client" (if you dont need it) saves about 100 MB
-dnf -y group install \
-    "base-graphical" \
-    "Common NetworkManager submodules" \
-    "Core" \
-    "KDE" \
-    "Guest Desktop Agents" \
-    "Hardware Support" \
-    "Multimedia" \
-    "Standard" \
-    "Workstation product core" \
-    "Desktop accessibility" \
-    "Input Methods"
+dnf -y group install "KDE Plasma Workspaces" \
+    # "base-graphical" \
+    # "Common NetworkManager submodules" \
+    # "Core" \
+    # "KDE" \
+    # "Guest Desktop Agents" \
+    # "Hardware Support" \
+    # "Multimedia" \
+    # "Standard" \
+    # "Workstation product core" \
+    # "Desktop accessibility" \
+    # "Input Methods"
+
+dnf -y install \
+    kcalc \
+	okular \
+	kate \
+	filelight \
+    google-noto-sans-fonts \
+    fira-code-fonts \
+    jetbrains-mono-fonts
 
 # Install basic support for image thumbnailing, previews and wallpapers
 dnf -y install --setopt=install_weak_deps=False \
