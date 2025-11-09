@@ -19,7 +19,7 @@ dnf -y install --setopt=install_weak_deps=False \
 # Install "KDE Plasma Workspaces" without default fonts, browser, dial-up support and printing support (edit for your own needs)
 # Includes KDE Plasma and a basic set of packages for a desktop system
 # Excluding "Printing client" (if you dont need it) saves about 100 MB
-dnf -y group install --setopt=install_weak_deps=False \
+dnf -y group install \
     "base-graphical" \
     "Common NetworkManager submodules" \
     "Core" \
