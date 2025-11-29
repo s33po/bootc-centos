@@ -26,6 +26,7 @@ EXCLUDE=(
   "05-kernel-hsk.sh"
   "05-kernel-kmods-pin.sh"
   "05-kernel-kmods-lts.sh"
+  "10-devtools.sh"
   "11-virtualization.sh"
   "25-multimedia.sh"
   "31-vscode.sh"
