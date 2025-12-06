@@ -7,7 +7,7 @@ set -xeuo pipefail
 dnf -y install glibc-langpack-{en,fi}
 
 # "Workstation" with KDE
-dnf -y group install "KDE Plasma Workspaces" \
+dnf -y group install --nobest "KDE Plasma Workspaces" \
 
 # Basic apps and fonts
 dnf -y install \
