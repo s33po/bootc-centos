@@ -23,7 +23,7 @@ dnf -y install --setopt=install_weak_deps=False \
 # Install "Workstation" without default fonts, browser and printing support (edit for your own needs)
 # Includes GNOME and a basic set of packages for a desktop system
 # Excluding "Printing client" (if you dont need it) saves about 100 MB
-dnf -y group install --setopt=install_weak_deps=False \
+dnf -y group install --nobest --setopt=install_weak_deps=False \
     "base-graphical" \
     "Common NetworkManager submodules" \
     "Core" \
