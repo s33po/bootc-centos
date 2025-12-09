@@ -9,7 +9,15 @@ dnf -y install glibc-langpack-{en,fi}
 # "Workstation" with KDE
 dnf -y group install --nobest "KDE Plasma Workspaces" \
 
-# Basic apps and fonts
+# Base
+dnf -y install \
+    plymouth \
+    plymouth-system-theme \
+    plymouth-theme-spinner \
+    git \
+    make \
+
+# Some KDE apps and fonts
 dnf -y install \
     kcalc \
 	okular \
