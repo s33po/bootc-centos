@@ -13,14 +13,11 @@ curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub
 tee /etc/flatpak/defpaks.list <<EOF
 org.kde.gwenview
 org.kde.haruna
-org.kde.KStyle.Breeze
 org.gtk.Gtk3theme.Breeze
 org.mozilla.firefox
 org.libreoffice.LibreOffice
 org.atheme.audacious
 io.github.DenysMb.Kontainer
-org.freedesktop.Platform.codecs-extra
-org.freedesktop.Platform.openh264
 EOF
 
 # Add gaming flatpaks to gaming.list
