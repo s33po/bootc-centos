@@ -7,7 +7,18 @@ set -xeuo pipefail
 dnf -y install glibc-langpack-{en,fi}
 
 # "Workstation" with KDE
-dnf -y group install --nobest "KDE Plasma Workspaces" \
+dnf -y group install --nobest \
+    "base-graphical" \
+    "Core" \
+    "Desktop accessibility" \
+    "Fonts" \
+    "Guest Desktop Agents" \
+    "Hardware Support" \
+    "Input Methods" \
+    "KDE" \
+    "Multimedia" \
+    "Common NetworkManager submodules" \
+    "Standard"
 
 # Some KDE apps and fonts
 dnf -y install \
@@ -16,7 +27,6 @@ dnf -y install \
     kate \
     kunifiedpush \
     filelight \
-    google-noto-emoji-fonts \
     google-noto-sans-fonts \
     fira-code-fonts \
     jetbrains-mono-fonts

@@ -5,11 +5,9 @@ set -xeuo pipefail
 # Install extra packages
 dnf -y install \
     alsa-sof-firmware \
-    borgbackup \
     btop \
     cifs-utils \
     container-tools \
-    davfs2 \
     distrobox \
     fastfetch \
     fpaste \
@@ -19,7 +17,6 @@ dnf -y install \
     git \
     ifuse \
     just \
-    libxcrypt-compat \
     lm_sensors \
     make \
     nvtop \
@@ -29,7 +26,6 @@ dnf -y install \
     plymouth-theme-spinner \
     powertop \
     rclone \
-    restic \
     steam-devices \
     system-reinstall-bootc \
     systemd-container \
