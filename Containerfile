@@ -5,9 +5,8 @@ FROM quay.io/centos-bootc/centos-bootc:c10s
 
 RUN --mount=type=tmpfs,dst=/opt \
     --mount=type=tmpfs,dst=/tmp \
-    --mount=type=tmpfs,dst=/var \
+    --mount=type=tmpfs,dst=/var,tmpfs-size=4G \
     --mount=type=tmpfs,dst=/boot \
-    --mount=type=tmpfs,dst=/usr/share/rpm \
     --mount=type=bind,from=context,source=/,target=/run/context \
     /run/context/build_files/build.sh
 
