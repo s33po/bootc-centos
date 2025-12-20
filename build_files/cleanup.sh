@@ -4,8 +4,8 @@ set -xeuo pipefail
 
 # Final cleanup
 dnf clean all
-find /var -mindepth 1 -maxdepth 1 ! -path '/var/cache' -delete 2>/dev/null || true
-find /var/cache -mindepth 1 ! -path '/var/cache/dnf*' -delete 2>/dev/null || true
+find /var -mindepth 1 -delete
+find /boot -mindepth 1 -delete
 mkdir -p /var /boot
 
 # Locale pruning: keep EN + FI + essentials
