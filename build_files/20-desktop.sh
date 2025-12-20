@@ -20,9 +20,11 @@ dnf -y install \
 # Some KDE apps and fonts
 dnf -y install \
     kcalc \
-	okular \
-	kate \
-	filelight \
+    okular \
+    kate \
+    kunifiedpush \
+    filelight \
+    google-noto-emoji-fonts \
     google-noto-sans-fonts \
     fira-code-fonts \
     jetbrains-mono-fonts
