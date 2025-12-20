@@ -4,9 +4,13 @@ set -xeuo pipefail
 
 # Final cleanup
 dnf clean all
-find /var -mindepth 1 -delete
-find /boot -mindepth 1 -delete
-mkdir -p /var /boot
+
+# Clean /var
+for d in /var/cache /var/tmp /var/log; do
+    find "$d" -mindepth 1 -delete || true
+done
+
+find /var -mindepth 1 -maxdepth 1 ! -path '/var/cache' ! -path '/var/tmp' ! -path '/var/log' -delete || true
 
 # Locale pruning: keep EN + FI + essentials
 keep_locales=(en en_US en_GB fi fi_FI C POSIX)
