@@ -19,5 +19,5 @@ dnf config-manager --save \
     --setopt=max_parallel_downloads=10 \
     --setopt=exclude="\
         PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,\
-        redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks
+        plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks
     "
