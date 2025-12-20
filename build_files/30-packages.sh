@@ -25,7 +25,6 @@ dnf -y install \
     plymouth-system-theme \
     plymouth-theme-spinner \
     powertop \
-    rclone \
     steam-devices \
     system-reinstall-bootc \
     systemd-container \
