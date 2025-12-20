@@ -35,6 +35,3 @@ done
 
 # Remove just docs so ISOs work.....
 rm -rf /usr/share/doc/just/*
-
-# Make /usr/local writeable
-ln -s /var/usrlocal /usr/local
