@@ -68,3 +68,31 @@ rm -rf /usr/share/backgrounds/f4*
 
 # Remove console login helper messages
 dnf remove -y console-login-helper-messages
+
+# Locale pruning: keep EN + FI + essentials
+keep_locales=(en en_US en_GB fi fi_FI C POSIX)
+keep_files=(locale.alias i18n)
+
+set +x
+
+# Remove large script locales except EN/FI
+find /usr/share/locale -type f -path "*/LC_SCRIPTS/ki18n6/*" \
+    ! -path "*/en/*" ! -path "*/fi/*" -delete >/dev/null 2>&1 || true
+
+# Remove unwanted locale dirs
+for loc in /usr/share/locale/*; do
+    [ -d "$loc" ] || continue
+    base="$(basename "$loc")"
+    if [[ ! " ${keep_locales[*]} " =~ " ${base} " ]]; then
+        rm -rf "$loc" >/dev/null 2>&1 || true
+    fi
+done
+
+# Remove unwanted standalone files
+for f in /usr/share/locale/*; do
+    [ -f "$f" ] || continue
+    base="$(basename "$f")"
+    if [[ ! " ${keep_files[*]} " =~ " ${base} " ]]; then
+        rm -f "$f" >/dev/null 2>&1 || true
+    fi
+done

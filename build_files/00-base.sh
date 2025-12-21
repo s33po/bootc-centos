@@ -2,17 +2,10 @@
 
 set -xeuo pipefail
 
-# Set /opt and /usr/local mutable
-mkdir -p /var/{opt,usrlocal}
-rm -rf /opt /usr/local
-ln -sf /var/opt /opt
-ln -sf /var/usrlocal /usr/local
-
-# Remove subscription-manager, install dnf-plugins, EPEL and enable CRB
-dnf -y remove subscription-manager console-login-helper-messages
-dnf -y install 'dnf-command(versionlock)' epel-release
+# Remove subscription-manager, install EPEL and enable CRB
+dnf -y remove subscription-manager
 dnf config-manager --set-enabled crb
-dnf -y upgrade epel-release
+dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
 
 # Set global dnf options
 dnf config-manager --save \
@@ -20,5 +13,5 @@ dnf config-manager --save \
     --setopt=exclude="\
         PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,plasma-discover-packagekit,\
         plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks,\
-        nvidia-gpu-firmware
+        nvidia-gpu-firmware,ibus-typing-booster,cldr-emoji-annotation,plasma-welcome
     "

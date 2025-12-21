@@ -3,11 +3,10 @@
 set -xeuo pipefail
 
 # Install only specific langpacks for needed languages/locales (edit for your own needs)
-# This saves +200 MB compared to installing the full 'glibc-all-langpacks'
 dnf -y install glibc-langpack-{en,fi}
 
 # "Workstation" without DE, printing support and fonts
-dnf -y group install --nobest \
+dnf -y group install --setopt=install_weak_deps=False \
     "base-graphical" \
     "Core" \
     "Guest Desktop Agents" \
@@ -18,32 +17,24 @@ dnf -y group install --nobest \
     "Standard"
 
 # Trimmed KDE
-dnf -y install --nobest \
+dnf -y install --setopt=install_weak_deps=False \
     plasma-desktop \
     sddm \
     sddm-breeze \
     sddm-kcm \
-
-dnf -y install --nobest \
-    NetworkManager-config-connectivity-redhat \
     ark \
     bluedevil \
-    colord-kde \
     dolphin \
     ffmpegthumbs \
-    filelight \
     flatpak-kcm \
     kde-gtk-config \
     kde-partitionmanager \
     kdegraphics-thumbnailers \
-    kdialog \
-    kdnssd \
     kio-admin \
     kjournald \
     konsole \
     kscreen \
     ksshaskpass \
-    kwalletmanager5 \
     libappindicator-gtk3 \
     pam-kwallet \
     plasma-discover \
@@ -51,12 +42,10 @@ dnf -y install --nobest \
     plasma-disks \
     plasma-nm \
     plasma-systemmonitor \
-    plasma-vault \
     samba-usershares \
     spectacle \
     thermald \
     kate \
-    okular \
     kcalc \
     plymouth-system-theme \
     clinfo

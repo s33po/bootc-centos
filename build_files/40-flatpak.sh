@@ -11,12 +11,14 @@ curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub
 
 # Add default flatpaks to defpaks.list
 tee /etc/flatpak/defpaks.list <<EOF
+org.kde.elisa
 org.kde.gwenview
+org.kde.okular
 org.kde.haruna
+org.kde.filelight
 org.gtk.Gtk3theme.Breeze
 org.mozilla.firefox
 org.libreoffice.LibreOffice
-org.atheme.audacious
 io.github.DenysMb.Kontainer
 EOF
 

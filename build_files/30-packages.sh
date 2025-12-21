@@ -13,12 +13,10 @@ dnf -y install \
     fzf \
     git \
     just \
-    lm_sensors \
     nvtop \
     steam-devices \
     system-reinstall-bootc \
     systemd-container \
     tmux \
-    wl-clipboard \
     wireguard-tools \
     zsh
