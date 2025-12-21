@@ -41,7 +41,6 @@ dnf -y install --nobest \
     kde-partitionmanager \
     kde-settings-pulseaudio \
     kdegraphics-thumbnailers \
-    kdeplasma-addons \
     kdialog \
     kdnssd \
     kio-admin \
@@ -76,7 +75,6 @@ dnf -y install --nobest \
     kcalc \
     xdg-desktop-portal-kde \
     plymouth-system-theme \
-    vlc-plugin-streamer \
     clinfo
 
 # Basic fonts
