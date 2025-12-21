@@ -16,7 +16,7 @@ dnf -y group install \
     "Common NetworkManager submodules" \
     "Standard"
 
-# Trimmed KDE
+# Trimmed KDE with core apps
 dnf -y install \
     plasma-desktop \
     sddm \
@@ -49,8 +49,8 @@ dnf -y install \
     kate \
     okular \
     kcalc \
-    plymouth-system-theme \
-    clinfo
+    okular \
+    plymouth-system-theme
 
 # Basic fonts
 dnf -y install --setopt=install_weak_deps=False \
