@@ -27,6 +27,7 @@ dnf -y install \
     dolphin \
     ffmpegthumbs \
     flatpak-kcm \
+    filelight \
     kde-gtk-config \
     kde-partitionmanager \
     kdegraphics-thumbnailers \
@@ -47,6 +48,7 @@ dnf -y install \
     thermald \
     kate \
     kcalc \
+    okular \
     plymouth-system-theme \
     clinfo
 
