@@ -5,7 +5,7 @@ network --bootproto=dhcp --device=link --activate
 keyboard --vckeymap=fi --xlayouts='fi'
 timezone Europe/Helsinki
 %post
-bootc switch --mutate-in-place --transport registry ${TARGET_IMAGE}
+bootc switch --mutate-in-place --transport registry ghcr.io/s33po/bootc-centos:test2
 rm -f /var/lib/systemd/random-seed
 rm -f /etc/machine-id
 truncate -s 0 /etc/machine-id

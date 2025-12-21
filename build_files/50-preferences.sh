@@ -49,17 +49,7 @@ firewall-offline-cmd --set-default-zone=Workstation
 ###### Fedora related KDE cleanup ######
 
 # Remove Fedora Plasma look-and-feel
-rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.fedora.desktop
-
-# Update default KDE profile to use Breeze Dark
-sed -i \
-    's,org.fedoraproject.fedora.desktop,org.kde.breezedark.desktop,g' \
-    /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
-
-# Set SDDM theme to Breeze
-sed -i \
-    's,#Current=01-breeze-fedora,Current=breeze,g' \
-    /etc/sddm.conf
+rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.{fedoralight,fedoradark}.desktop
 
 # Remove Fedora wallpapers
 rm -rf /usr/share/wallpapers/Fedora
