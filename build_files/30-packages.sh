@@ -11,7 +11,6 @@ dnf -y install \
     fastfetch \
     fuse \
     fzf \
-    fwupd \
     git \
     just \
     lm_sensors \

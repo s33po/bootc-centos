@@ -20,18 +20,14 @@ dnf -y group install --nobest \
 # Trimmed KDE
 dnf -y install --nobest \
     plasma-desktop \
-    plasma-workspace \
-    plasma-workspace-wayland \
     sddm \
     sddm-breeze \
     sddm-kcm \
-    sddm-wayland-plasma \
-    alsa-sof-firmware \
-    NetworkManager \
+
+dnf -y install --nobest \
     NetworkManager-config-connectivity-redhat \
     ark \
     bluedevil \
-    breeze-icon-theme \
     colord-kde \
     dolphin \
     ffmpegthumbs \
@@ -39,47 +35,34 @@ dnf -y install --nobest \
     flatpak-kcm \
     kde-gtk-config \
     kde-partitionmanager \
-    kde-settings-pulseaudio \
     kdegraphics-thumbnailers \
     kdialog \
     kdnssd \
     kio-admin \
     kjournald \
-    kmenuedit \
     konsole \
     kscreen \
-    kscreenlocker \
     ksshaskpass \
-    kwin \
     kwalletmanager5 \
     libappindicator-gtk3 \
     pam-kwallet \
-    plasma-breeze \
     plasma-discover \
     plasma-discover-notifier \
     plasma-disks \
     plasma-nm \
-    plasma-nm-openvpn \
-    plasma-pa \
     plasma-systemmonitor \
     plasma-vault \
-    polkit-kde \
     samba-usershares \
     spectacle \
     thermald \
-    udisks2 \
-    toolbox \
-    xwaylandvideobridge \
     kate \
     okular \
     kcalc \
-    xdg-desktop-portal-kde \
     plymouth-system-theme \
     clinfo
 
 # Basic fonts
 dnf -y install --setopt=install_weak_deps=False \
-    google-noto-sans-fonts \
     liberation-fonts \
     dejavu-sans-fonts \
     fira-code-fonts \
@@ -89,6 +72,4 @@ dnf -y install --setopt=install_weak_deps=False \
 dnf -y install --setopt=install_weak_deps=False \
     avif-pixbuf-loader \
     gdk-pixbuf2-modules-extra \
-    jxl-pixbuf-loader \
-    libjxl \
     webp-pixbuf-loader
