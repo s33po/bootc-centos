@@ -18,6 +18,7 @@ dnf -y upgrade epel-release
 dnf config-manager --save \
     --setopt=max_parallel_downloads=10 \
     --setopt=exclude="\
-        PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,nvidia-gpu-firmware,\
-        plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks
+        PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,plasma-discover-packagekit,\
+        plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks,\
+        nvidia-gpu-firmware
     "
