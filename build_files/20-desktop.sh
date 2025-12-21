@@ -6,7 +6,7 @@ set -xeuo pipefail
 dnf -y install glibc-langpack-{en,fi}
 
 # "Workstation" without DE, printing support and fonts
-dnf -y group install --setopt=install_weak_deps=False \
+dnf -y group install \
     "base-graphical" \
     "Core" \
     "Guest Desktop Agents" \
@@ -17,7 +17,7 @@ dnf -y group install --setopt=install_weak_deps=False \
     "Standard"
 
 # Trimmed KDE
-dnf -y install --setopt=install_weak_deps=False \
+dnf -y install \
     plasma-desktop \
     sddm \
     sddm-breeze \
