@@ -54,6 +54,27 @@ dnf remove -y console-login-helper-messages
 # Remove docs to make image smaller
 rm -rf /usr/share/doc
 
+# Remove Fedora Plasma look-and-feel
+rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.{fedoralight,fedoradark}.desktop
+
+# Default to dark breeze
+sed -i \
+    's,org.fedoraproject.fedora.desktop,org.kde.breezedark.desktop,g' \
+    /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
+
+sed -i \
+    's,BreezeLight,BreezeDark,g' \
+    /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
+    
+sed -i \
+    's,#Current=01-breeze-fedora,Current=breezedark,g' \
+    /etc/sddm.conf
+
+# Remove Fedora wallpapers
+rm -rf /usr/share/wallpapers/Fedora
+rm -rf /usr/share/wallpapers/F4*
+rm -rf /usr/share/backgrounds/f4*
+
 # Locale pruning to make image smaller: keep EN + FI + essentials
 keep_locales=(en en_US en_GB fi fi_FI C POSIX)
 keep_files=(locale.alias i18n)
