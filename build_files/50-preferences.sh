@@ -46,20 +46,15 @@ EOF
 # Set default firewalld zone to "Workstation"
 firewall-offline-cmd --set-default-zone=Workstation
 
-###### Fedora related KDE cleanup ######
-
-# Remove Fedora Plasma look-and-feel
-rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.{fedoralight,fedoradark}.desktop
-
-# Remove Fedora wallpapers
-rm -rf /usr/share/wallpapers/Fedora
-rm -rf /usr/share/wallpapers/F4*
-rm -rf /usr/share/backgrounds/f4*
+###### PRE-CLEANUP ######
 
 # Remove console login helper messages
 dnf remove -y console-login-helper-messages
 
-# Locale pruning: keep EN + FI + essentials
+# Remove docs to make image smaller
+rm -rf /usr/share/doc
+
+# Locale pruning to make image smaller: keep EN + FI + essentials
 keep_locales=(en en_US en_GB fi fi_FI C POSIX)
 keep_files=(locale.alias i18n)
 
