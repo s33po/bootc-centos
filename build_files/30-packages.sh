@@ -9,6 +9,7 @@ dnf -y install \
     container-tools \
     distrobox \
     fastfetch \
+    fira-code-fonts \
     fuse \
     fzf \
     git \
