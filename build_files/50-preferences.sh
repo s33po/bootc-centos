@@ -55,7 +55,7 @@ dnf remove -y console-login-helper-messages
 rm -rf /usr/share/doc
 
 # Remove Fedora Plasma look-and-feel
-rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.{fedoralight,fedoradark}.desktop
+rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.{fedora,fedoralight,fedoradark}.desktop
 
 # Default to dark breeze
 sed -i \
