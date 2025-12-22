@@ -67,7 +67,7 @@ sed -i \
     /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
     
 sed -i \
-    's,#Current=01-breeze-fedora,Current=breezedark,g' \
+    's,#Current=01-breeze-fedora,Current=breeze,g' \
     /etc/sddm.conf
 
 # Remove Fedora wallpapers
