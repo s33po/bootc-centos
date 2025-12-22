@@ -43,7 +43,6 @@ dnf -y install \
     plasma-systemmonitor \
     spectacle \
     kate \
-    okular \
     kcalc \
     plymouth-system-theme
 

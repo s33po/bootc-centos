@@ -12,6 +12,7 @@ curl --retry 3 -o /etc/flatpak/remotes.d/flathub.flatpakrepo "https://dl.flathub
 # Add default flatpaks to defpaks.list
 tee /etc/flatpak/defpaks.list <<EOF
 org.atheme.audacious
+org.kde.okular
 org.kde.gwenview
 org.kde.haruna
 org.gtk.Gtk3theme.Breeze
