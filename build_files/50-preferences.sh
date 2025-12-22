@@ -2,17 +2,21 @@
 
 set -xeuo pipefail
 
-###### BASIC PREFERENCES AND TWEAKS ######
-
 # Disable lastlog display
 authselect enable-feature with-silent-lastlog
 
 # Configure bootc updates
-sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
-sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
-sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
+sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.service
 
-###### JUST CONFIGURATION ######
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
+sed -i 's|^#\?Persistent=.*|Persistent=true|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
+sed -i 's|^#\?AutomaticUpdatePolicy=.*|AutomaticUpdatePolicy=stage|' \
+  /etc/rpm-ostreed.conf
 
 # Copy Justfile to image
 install -Dm644 /run/context/build_files/user.just /usr/share/just/user.just
@@ -20,8 +24,6 @@ install -Dm644 /run/context/build_files/user.just /usr/share/just/user.just
 # Create global alias for user.just commands
 echo "alias jmain='just --justfile /usr/share/just/user.just'" > /etc/profile.d/jmain.sh
 chmod 644 /etc/profile.d/jmain.sh
-
-###### FIREWALL CONFIGURATION ######
 
 # Write firewalld zone "Workstation" (more permissive than stock)
 mkdir -p /usr/lib/firewalld/zones
@@ -46,34 +48,34 @@ EOF
 # Set default firewalld zone to "Workstation"
 firewall-offline-cmd --set-default-zone=Workstation
 
-###### PRE-CLEANUP ######
-
 # Remove console login helper messages
 dnf remove -y console-login-helper-messages
 
-# Remove docs to make image smaller
+# Remove offline docs
 rm -rf /usr/share/doc
 
 # Remove Fedora Plasma look-and-feel
 rm -rf /usr/share/plasma/look-and-feel/org.fedoraproject.{fedora,fedoralight,fedoradark}.desktop
-
-# Default to dark breeze
-sed -i \
-    's,org.fedoraproject.fedora.desktop,org.kde.breezedark.desktop,g' \
-    /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
-
-sed -i \
-    's,BreezeLight,BreezeDark,g' \
-    /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
-    
-sed -i \
-    's,#Current=01-breeze-fedora,Current=breeze,g' \
-    /etc/sddm.conf
+rm -rf /usr/share/sddm/themes/01-breeze-fedora
 
 # Remove Fedora wallpapers
 rm -rf /usr/share/wallpapers/Fedora
 rm -rf /usr/share/wallpapers/F4*
 rm -rf /usr/share/backgrounds/f4*
+
+# Change Plasma defaults
+sed -i 's|^LookAndFeelPackage=.*|LookAndFeelPackage=org.kde.breezedark.desktop|' \
+  /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
+
+sed -i 's|^ColorScheme=.*|ColorScheme=BreezeDark|' \
+  /usr/share/kde-settings/kde-profile/default/xdg/kdeglobals
+
+# SDDM config
+sed -i 's|^#\?Current=.*|Current=breeze|' \
+  /etc/sddm.conf
+
+sed -i 's|^background=.*/images/|background=/usr/share/wallpapers/Next/contents/images_dark/|' \
+  /usr/share/sddm/themes/breeze/theme.conf
 
 # Locale pruning to make image smaller: keep EN + FI + essentials
 keep_locales=(en en_US en_GB fi fi_FI C POSIX)
