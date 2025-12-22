@@ -26,7 +26,6 @@ dnf -y install \
     ark \
     bluedevil \
     dolphin \
-    ffmpegthumbs \
     flatpak-kcm \
     filelight \
     kde-gtk-config \
@@ -37,16 +36,12 @@ dnf -y install \
     konsole \
     kscreen \
     ksshaskpass \
-    libappindicator-gtk3 \
     pam-kwallet \
     plasma-discover \
-    plasma-discover-notifier \
     plasma-disks \
     plasma-nm \
     plasma-systemmonitor \
-    samba-usershares \
     spectacle \
-    thermald \
     kate \
     okular \
     kcalc \
