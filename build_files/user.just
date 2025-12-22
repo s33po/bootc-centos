@@ -309,4 +309,4 @@ install-fonts:
 # Show this help message
 [group('Help')]
 help:
-    @just --list
+    @jmain --list
