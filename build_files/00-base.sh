@@ -13,5 +13,6 @@ dnf config-manager --save \
     --setopt=exclude="\
         PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,plasma-discover-packagekit,\
         plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks,\
-        nvidia-gpu-firmware,ibus-typing-booster,cldr-emoji-annotation,plasma-welcome,xwaylandvideobridge
+        ibus-typing-booster,cldr-emoji-annotation,plasma-welcome,xwaylandvideobridge,\
+        nvidia-gpu-firmware,intel-gpu-firmware
     "
