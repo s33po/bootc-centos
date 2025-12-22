@@ -14,5 +14,5 @@ dnf config-manager --save \
         PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,plasma-discover-packagekit,\
         plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks,\
         ibus-typing-booster,cldr-emoji-annotation,plasma-welcome,xwaylandvideobridge,\
-        nvidia-gpu-firmware,intel-gpu-firmware
+        nvidia-gpu-firmware,intel-gpu-firmware,iwlwifi-dvm-firmware
     "
