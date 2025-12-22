@@ -5,14 +5,11 @@ set -xeuo pipefail
 # Install only specific langpacks for needed languages/locales (edit for your own needs)
 dnf -y install glibc-langpack-{en,fi}
 
-# "Workstation" without DE and printing support
+# "Workstation" without DE, fonts, printing support and guest agents
 dnf -y group install \
     "base-graphical" \
     "Core" \
-    "Fonts" \
-    "Guest Desktop Agents" \
     "Hardware Support" \
-    "Input Methods" \
     "Multimedia" \
     "Common NetworkManager submodules" \
     "Standard"
@@ -46,7 +43,14 @@ dnf -y install \
     kcalc \
     plymouth-system-theme
 
-# Basic support for image thumbnailing
+# Core fonts
+dnf -y install --setopt=install_weak_deps=False \
+    default-fonts-core \
+    redhat-display-vf-fonts \
+    liberation-fonts \
+    fira-code-fonts
+
+# Extras for image thumbnailing
 dnf -y install --setopt=install_weak_deps=False \
     avif-pixbuf-loader \
     gdk-pixbuf2-modules-extra \
