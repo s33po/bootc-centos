@@ -23,6 +23,7 @@ dnf -y install \
     ark \
     bluedevil \
     dolphin \
+    default-fonts-core \
     flatpak-kcm \
     filelight \
     kde-gtk-config \
@@ -42,13 +43,6 @@ dnf -y install \
     kate \
     kcalc \
     plymouth-system-theme
-
-# Core fonts
-dnf -y install --setopt=install_weak_deps=False \
-    default-fonts-core \
-    redhat-display-vf-fonts \
-    liberation-fonts \
-    fira-code-fonts
 
 # Extras for image thumbnailing
 dnf -y install --setopt=install_weak_deps=False \

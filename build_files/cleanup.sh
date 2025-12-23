@@ -4,10 +4,7 @@ set -xeuo pipefail
 
 # Final cleanup
 dnf clean all
-find /var -mindepth 1 -delete
+
+find /var -mindepth 1 -type f -delete
 find /boot -mindepth 1 -delete
 find /tmp -mindepth 1 -delete
-mkdir -p /var /boot /tmp
-
-# Make /usr/local writeable
-ln -s /var/usrlocal /usr/local

@@ -9,11 +9,11 @@ dnf -y install \
     container-tools \
     distrobox \
     fastfetch \
+    fira-code-fonts \
     fuse \
     fzf \
     git \
     just \
-    nfs-utils \
     nvtop \
     steam-devices \
     system-reinstall-bootc \
