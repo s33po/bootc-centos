@@ -30,7 +30,7 @@ dnf -y remove \
     realtek-firmware \
     tiwilink-firmware
 
-dnf -y reinstall nds-utils chrony irqbalance sssd
+dnf -y reinstall nfs-utils chrony irqbalance sssd
 
 # Remove unnecessary packages
 dnf -y remove \
