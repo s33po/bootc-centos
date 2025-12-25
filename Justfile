@@ -55,7 +55,7 @@ build-vm:
         "localhost/{{ image_name }}:{{ tag }}"
 
     echo "VM image built: output/qcow2/disk.qcow2"
-    
+
     # Auto-cleanup: Remove the copied image from root storage
     echo "Cleaning up root storage..."
     sudo podman rmi "localhost/{{ image_name }}:{{ tag }}" 2>/dev/null || true
@@ -72,7 +72,7 @@ build-iso:
         echo "Container image not found. Building first..."
         just build
     fi
-    
+
     echo "Copying image to root podman storage..."
     sudo podman image scp $(id -u)@localhost::localhost/{{ image_name }}:{{ tag }} root@localhost::localhost/{{ image_name }}:{{ tag }}
 
@@ -104,7 +104,7 @@ build-iso:
     # Cleanup
     rm -f "${ISO_CONFIG}"
     echo "ISO installer built in output/bootiso/"
-    
+
     # Auto-cleanup: Remove the copied image from root storage
     echo "Cleaning up root storage..."
     sudo podman rmi "localhost/{{ image_name }}:{{ tag }}" 2>/dev/null || true
@@ -131,7 +131,7 @@ clean:
     echo "Aggressively cleaning root storage..."
     sudo podman system prune -a -f || true
     sudo podman volume prune -f || true
-    
+
     # Clean BIB cache directories
     echo "Cleaning BIB cache directories..."
     sudo rm -rf /tmp/osbuild-* 2>/dev/null || true
@@ -143,7 +143,7 @@ clean:
 clean-all:
     #!/usr/bin/bash
     set -euo pipefail
-    
+
     echo "⚠️   DANGER: Deep cleaning will affect ALL podman images including distrobox!   ⚠️"
     echo "This will:"
     echo "  - Remove ALL unused images (including distrobox base images)"
@@ -151,33 +151,33 @@ clean-all:
     echo "  - Remove ALL unused volumes"
     echo ""
     echo "Press Ctrl+C to cancel..."
-    
+
     # Visual countdown
     for i in {10..1}; do
         echo -ne "\rStarting in $i seconds... "
         sleep 1
     done
     echo -e "\rProceeding with deep clean...    "
-    
+
     # Run normal cleanup
     echo "Running normal cleanup first..."
     just clean
-    
+
     # Run deep cleanup
     echo "Starting aggressive cleanup..."
-    
+
     # Remove ALL unused images (distrobox images could be lost)
     echo "Removing all unused images..."
     podman image prune -a -f || true
-    
+
     # Clean ALL build caches
     echo "Cleaning all build caches..."
     podman builder prune -a -f || true
-    
+
     # Clean ALL volumes (distrobox data could be lost)
     echo "Cleaning all unused volumes..."
     podman volume prune -f || true
-    
+
     echo "Deep cleanup complete - distrobox data may have been removed!"
 
 # Format Just files (check and auto-fix)

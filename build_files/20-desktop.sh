@@ -27,7 +27,6 @@ dnf -y install --setopt=install_weak_deps=False \
     kde-gtk-config \
     kde-partitionmanager \
     kdegraphics-thumbnailers \
-    kdeplasma-addons \
     kf6-baloo-file \
     kio-admin \
     kio-extras \
@@ -35,7 +34,6 @@ dnf -y install --setopt=install_weak_deps=False \
     konsole \
     kscreen \
     ksshaskpass \
-    lsb_release \
     low-memory-monitor \
     libproxy-bin \
     media-player-info \

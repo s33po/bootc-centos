@@ -11,6 +11,5 @@ systemctl enable firewalld
 systemctl enable podman.socket
 
 # Disable services
-systemctl disable cockpit.socket
 systemctl disable rpm-ostree-countme.timer
 systemctl disable rpcbind.socket

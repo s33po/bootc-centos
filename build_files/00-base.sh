@@ -32,10 +32,13 @@ dnf -y remove \
 
 # Remove unnecessary packages
 dnf -y remove \
+    adcli \
     chrony \
     console-login-helper-messages \
     irqbalance \
-    sssd*
+    nfs-utils \
+    sssd* \
+    yggdrasil*
 
 # Install packages
 dnf -y install --setopt=install_weak_deps=False \
