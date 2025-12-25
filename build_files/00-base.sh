@@ -59,6 +59,7 @@ dnf config-manager --save \
         plasma-discover-packagekit,\
         plasma-workspace-wallpapers,\
         plasma-welcome,\
+        maliit-keyboard,\
         xwaylandvideobridge,\
         nvidia-gpu-firmware,\
         intel-gpu-firmware,\

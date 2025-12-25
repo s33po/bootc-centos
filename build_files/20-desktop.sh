@@ -55,15 +55,5 @@ dnf -y install --setopt=install_weak_deps=False \
     dolphin-plugins \
     kate-plugins \
     kate-krunner-plugin \
-    kaccounts-providers
-
-## Optional:
-#dnf -y install \
-#    kde-inotify-survey \
-#    plasma-milou \
-#    xsettingsd \
-#    pipewire-jack-audio-connection-kit \
-#    google-noto-serif-fonts \
-#    iio-sensor-proxy \
-#    libproxy-bin \
-#    usbmuxd
+    kaccounts-providers \
+    poppler-utils

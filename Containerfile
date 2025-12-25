@@ -4,7 +4,9 @@ COPY build_files /build_files
 FROM quay.io/centos-bootc/centos-bootc:c10s
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=tmpfs,dst=/boot \
+    --mount=type=tmpfs,dst=/var \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build_files/build.sh
 
-RUN rm -rf /var/{log,cache,lib,roothome}/* && bootc container lint
+RUN rm -rf /var/* && mkdir /var/tmp && bootc container lint
