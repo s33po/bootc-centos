@@ -10,6 +10,10 @@ rm -rf /opt /usr/local
 ln -sf var/opt /opt
 ln -sf ../var/usrlocal /usr/local
 
+# Set global dnf options
+dnf config-manager --save \
+    --setopt=max_parallel_downloads=10
+
 # Remove subscription-manager, install EPEL and enable CRB
 dnf -y remove subscription-manager
 dnf config-manager --set-enabled crb
@@ -19,77 +23,41 @@ dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noar
 dnf -y remove \
     atheros-firmware \
     brcmfmac-firmware \
+    intel-gpu-firmware \
     mt7xxx-firmware \
+    nvidia-gpu-firmware \
     nxpwireless-firmware \
     realtek-firmware \
-    tiwilink-firmware \
-    intel-gpu-firmware \
-    nvidia-gpu-firmware
+    tiwilink-firmware
 
 # Remove unnecessary packages
 dnf -y remove \
-      console-login-helper-messages \
-      chrony \
-      sssd* \
-      irqbalance \
-
-
-# Set global dnf options
-dnf config-manager --save \
-    --setopt=max_parallel_downloads=10 \
-    --setopt=exclude="\
-        PackageKit,\
-        PackageKit-command-not-found,\
-        rootfiles,\
-        redhat-flatpak-repo,\
-        rsyslog*,\
-        console-login-helper-messages,\
-        cockpit,\
-        chrony,\
-        cronie*,\
-        crontabs,\
-        irqbalance,\
-        setroubleshoot,\
-        sssd*,\
-        firefox,\
-        glibc-all-langpacks,\
-        ibus-typing-booster,\
-        cldr-emoji-annotation,\
-        plasma-discover-kns,\
-        plasma-discover-packagekit,\
-        plasma-workspace-wallpapers,\
-        plasma-welcome,\
-        xwaylandvideobridge,\
-        nvidia-gpu-firmware,\
-        intel-gpu-firmware,\
-        iwlwifi-dvm-firmware
-    "
+    chrony \
+    console-login-helper-messages \
+    irqbalance \
+    sssd*
 
 # Install packages
 dnf -y install --setopt=install_weak_deps=False \
+    bash-color-prompt \
+    bc \
     cifs-utils \
     distrobox \
     firewalld \
     fuse \
     git-core \
-    system-reinstall-bootc \
-    systemd-container \
-    systemd-timesyncd \
-    systemd-resolved \
-    tuned \
-    tuned-ppd
-
-dnf -y install \
-    bash-color-prompt \
-    bc \
-    dos2unix \
     man-pages \
     mtr \
     parted \
     rsync \
+    system-reinstall-bootc \
+    systemd-container \
+    systemd-resolved \
+    systemd-timesyncd \
     time \
     tree \
-    vim \
+    tuned \
+    tuned-ppd \
     wget
 
 # Enable resolved

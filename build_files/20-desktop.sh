@@ -7,25 +7,43 @@ dnf -y install glibc-langpack-{en,fi}
 
 # Trimmed KDE with core apps
 dnf -y install --setopt=install_weak_deps=False \
-    plasma-desktop \
-    sddm \
-    sddm-breeze \
-    sddm-kcm \
     ark \
     bluedevil \
-    dolphin \
+    breeze-gtk-gtk3 \
     default-fonts-core \
-    flatpak-kcm \
+    dolphin \
+    dolphin-plugins \
+    exiv2 \
     filelight \
+    flatpak-kcm \
+    glib-networking \
+    ibus \
+    kate \
+    kate-krunner-plugin \
+    kate-plugins \
+    kaccounts-providers \
+    kcalc \
+    kdialog \
     kde-gtk-config \
     kde-partitionmanager \
     kdegraphics-thumbnailers \
+    kdeplasma-addons \
+    kf6-baloo-file \
     kio-admin \
+    kio-extras \
     kjournald \
     konsole \
     kscreen \
     ksshaskpass \
+    lsb_release \
+    low-memory-monitor \
+    libproxy-bin \
+    media-player-info \
+    NetworkManager-wifi \
     pam-kwallet \
+    pipewire \
+    plymouth-system-theme \
+    plasma-desktop \
     plasma-discover \
     plasma-discover-flatpak \
     plasma-disks \
@@ -33,28 +51,13 @@ dnf -y install --setopt=install_weak_deps=False \
     plasma-nm \
     plasma-pa \
     plasma-systemmonitor \
-    spectacle \
-    kate \
-    kcalc \
-    plymouth-system-theme \
-    NetworkManager-wifi \
+    qt6-qtimageformats \
     samba-client \
-    kio-extras \
-    pipewire \
-    media-player-info \
-    exiv2 \
-    glib-networking \
-    low-memory-monitor \
+    sddm \
+    sddm-breeze \
+    sddm-kcm \
+    signon-kwallet-extension \
+    spectacle \
     udev-hid-bpf-stable \
     upower \
-    usbutils \
-    ibus \
-    signon-kwallet-extension \
-    qt6-qtimageformats \
-    lsb_release \
-    breeze-gtk-gtk3 \
-    dolphin-plugins \
-    kate-plugins \
-    kate-krunner-plugin \
-    kaccounts-providers \
-    poppler-utils
+    usbutils

@@ -12,5 +12,6 @@ dnf -y install \
     nvtop \
     steam-devices \
     tmux \
+    vim \
     wireguard-tools \
     zsh
