@@ -29,6 +29,7 @@ dnf -y install --setopt=install_weak_deps=False \
     plasma-discover \
     plasma-discover-flatpak \
     plasma-disks \
+    plasma-milou \
     plasma-nm \
     plasma-pa \
     plasma-systemmonitor \
