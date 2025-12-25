@@ -6,7 +6,7 @@ set -xeuo pipefail
 dnf -y install glibc-langpack-{en,fi}
 
 # Trimmed KDE with core apps
-dnf -y install \
+dnf -y install --setopt=install_weak_deps=False \
     plasma-desktop \
     sddm \
     sddm-breeze \
@@ -27,17 +27,43 @@ dnf -y install \
     ksshaskpass \
     pam-kwallet \
     plasma-discover \
+    plasma-discover-flatpak \
     plasma-disks \
     plasma-nm \
+    plasma-pa \
     plasma-systemmonitor \
     spectacle \
     kate \
     kcalc \
     plymouth-system-theme \
-    NetworkManager-wifi
+    NetworkManager-wifi \
+    samba-client \
+    kio-extras \
+    pipewire \
+    media-player-info \
+    exiv2 \
+    glib-networking \
+    low-memory-monitor \
+    udev-hid-bpf-stable \
+    upower \
+    usbutils \
+    ibus \
+    signon-kwallet-extension \
+    qt6-qtimageformats \
+    lsb_release \
+    breeze-gtk-gtk3 \
+    dolphin-plugins \
+    kate-plugins \
+    kate-krunner-plugin \
+    kaccounts-providers
 
-# Extras for image thumbnailing
-dnf -y install --setopt=install_weak_deps=False \
-    avif-pixbuf-loader \
-    gdk-pixbuf2-modules-extra \
-    webp-pixbuf-loader
+## Optional:
+#dnf -y install \
+#    kde-inotify-survey \
+#    plasma-milou \
+#    xsettingsd \
+#    pipewire-jack-audio-connection-kit \
+#    google-noto-serif-fonts \
+#    iio-sensor-proxy \
+#    libproxy-bin \
+#    usbmuxd

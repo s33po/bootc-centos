@@ -19,9 +19,6 @@ dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noar
 dnf -y remove \
     atheros-firmware \
     brcmfmac-firmware \
-    iwlegacy-firmware \
-    iwlwifi-dvm-firmware \
-    iwlwifi-mvm-firmware \
     mt7xxx-firmware \
     nxpwireless-firmware \
     realtek-firmware \
@@ -34,6 +31,8 @@ dnf -y remove \
       console-login-helper-messages \
       chrony \
       sssd* \
+      irqbalance \
+
 
 # Set global dnf options
 dnf config-manager --save \
@@ -49,6 +48,7 @@ dnf config-manager --save \
         chrony,\
         cronie*,\
         crontabs,\
+        irqbalance,\
         setroubleshoot,\
         sssd*,\
         firefox,\
@@ -66,7 +66,7 @@ dnf config-manager --save \
     "
 
 # Install packages
-dnf -y install \
+dnf -y install --setopt=install_weak_deps=False \
     cifs-utils \
     distrobox \
     firewalld \
@@ -86,7 +86,6 @@ dnf -y install \
     man-pages \
     mtr \
     parted \
-    plocate \
     rsync \
     time \
     tree \
