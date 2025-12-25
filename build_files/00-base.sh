@@ -30,15 +30,12 @@ dnf -y remove \
     realtek-firmware \
     tiwilink-firmware
 
-dnf -y reinstall nfs-utils chrony irqbalance sssd
-
 # Remove unnecessary packages
 dnf -y remove \
     adcli \
     chrony \
     console-login-helper-messages \
     irqbalance \
-    nfs-utils \
     sssd* \
     yggdrasil*
 
