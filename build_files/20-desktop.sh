@@ -5,15 +5,6 @@ set -xeuo pipefail
 # Install only specific langpacks for needed languages/locales (edit for your own needs)
 dnf -y install glibc-langpack-{en,fi}
 
-# "Workstation" without DE, fonts, printing support and guest agents
-dnf -y group install \
-    "base-graphical" \
-    "Core" \
-    "Hardware Support" \
-    "Multimedia" \
-    "Common NetworkManager submodules" \
-    "Standard"
-
 # Trimmed KDE with core apps
 dnf -y install \
     plasma-desktop \
@@ -42,7 +33,8 @@ dnf -y install \
     spectacle \
     kate \
     kcalc \
-    plymouth-system-theme
+    plymouth-system-theme \
+    NetworkManager-wifi
 
 # Extras for image thumbnailing
 dnf -y install --setopt=install_weak_deps=False \
