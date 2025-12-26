@@ -22,6 +22,7 @@ dnf -y install \
     dolphin \
     dolphin-plugins \
     filelight \
+    flatpak \
     flatpak-kcm \
     kate \
     kate-krunner-plugin \

@@ -13,8 +13,6 @@ dnf -y --enablerepo docker-ce-stable install --setopt=install_weak_deps=False \
     docker-buildx-plugin \
     docker-compose-plugin
 
-### Docker related setup/configuration ###
-
 # Create symlink for docker-compose command
 ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/bin/docker-compose
 
