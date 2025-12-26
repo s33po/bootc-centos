@@ -13,10 +13,7 @@ fi
 
 # List of build scripts to EXCLUDE
 EXCLUDE=(
-  "05-kernel-hsk.sh"
-  "05-kernel-kmods-pin.sh"
-  "05-kernel-kmods-lts.sh"
-  "10-devtools.sh"
+  "05-kernel-kmods.sh"
   "11-virtualization.sh"
   "25-multimedia.sh"
   "31-vscode.sh"
@@ -38,23 +35,6 @@ for script in $(find "${BUILD_SCRIPTS_PATH}" -maxdepth 1 -iname "*-*.sh" -type f
     continue
   fi
 
-  # Skip devtools.sh if any kernel script is included
-  if [[ "$base" == "10-devtools.sh" ]]; then
-    # Check if any kernel script will run
-    kernel_present=false
-    for kscript in "${BUILD_SCRIPTS_PATH}"/05-kernel-*.sh; do
-      kbase=$(basename "$kscript")
-      if [ -f "$kscript" ] && [[ ! " ${EXCLUDE[@]} " =~ " ${kbase} " ]]; then
-        kernel_present=true
-        break
-      fi
-    done
-    if [ "$kernel_present" = true ]; then
-      echo "Skipping $base (will be run by kernel script)"
-      continue
-    fi
-  fi
-
   echo "Including: $base"
   scripts_to_run+=("$script")
 done
@@ -70,7 +50,7 @@ for script in "${scripts_to_run[@]}"; do
   printf "::endgroup::\n"
 done
 
-# Make sure cleanup runs last
+# Cleanup
 printf "::group:: ===== Image Cleanup =====\n"
 "${BUILD_SCRIPTS_PATH}/cleanup.sh"
 printf "::endgroup::\n"

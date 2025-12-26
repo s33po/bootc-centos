@@ -38,6 +38,9 @@ dnf -y remove \
     sssd* \
     yggdrasil*
 
+# Install gcc for brew (pulls kernel-headers)
+#nf -y --setopt=install_weak_deps=False install gcc
+
 # Install packages
 dnf -y install --setopt=install_weak_deps=False \
     bash-color-prompt \
