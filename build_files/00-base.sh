@@ -15,6 +15,10 @@ dnf config-manager --save \
         plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks,\
         plasma-welcome,xwaylandvideobridge
     "
+
+# Install gcc for brew (pulls kernel-headers)
+#dnf -y --setopt=install_weak_deps=False install gcc
+
 # Configure bootc updates
 sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' \
   /usr/lib/systemd/system/bootc-fetch-apply-updates.service
