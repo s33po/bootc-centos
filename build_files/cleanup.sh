@@ -14,6 +14,9 @@ rm -rf /usr/share/backgrounds/f4*
 # Remove offline docs
 rm -rf /usr/share/doc
 
+# Remove versionlocks
+dnf versionlock clear
+
 # Final cleanup
 dnf clean all
 find /var -mindepth 1 -delete
