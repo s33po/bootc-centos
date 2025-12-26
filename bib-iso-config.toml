@@ -2,8 +2,6 @@
 contents = """
 rootpw --lock
 network --bootproto=dhcp --device=link --activate
-keyboard --vckeymap=fi --xlayouts='fi'
-timezone Europe/Helsinki
 %post
 bootc switch --mutate-in-place --transport registry ${TARGET_IMAGE}
 rm -f /var/lib/systemd/random-seed
