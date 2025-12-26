@@ -2,27 +2,15 @@
 
 set -xeuo pipefail
 
-###### BASIC PREFERENCES AND TWEAKS ######
-
 # Disable lastlog display
 authselect enable-feature with-silent-lastlog
 
-# Configure bootc updates
-sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
-sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
-sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
-sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
-
-###### JUST CONFIGURATION ######
-
 # Copy Justfile to image
-install -Dm644 /run/context/build_files/user.just /usr/share/just/user.just
+install -Dm644 /ctx/build_files/user.just /usr/share/just/user.just
 
 # Create global alias for user.just commands
 echo "alias jmain='just --justfile /usr/share/just/user.just'" > /etc/profile.d/jmain.sh
 chmod 644 /etc/profile.d/jmain.sh
-
-###### FIREWALL CONFIGURATION ######
 
 # Write firewalld zone "Workstation" (more permissive than stock)
 mkdir -p /usr/lib/firewalld/zones
@@ -46,8 +34,6 @@ EOF
 
 # Set default firewalld zone to "Workstation"
 firewall-offline-cmd --set-default-zone=Workstation
-
-###### GNOME SETTINGS ######
 
 # Set up dconf system profile
 mkdir -p /etc/dconf/profile
