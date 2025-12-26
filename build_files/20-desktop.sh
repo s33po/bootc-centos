@@ -5,7 +5,7 @@ set -xeuo pipefail
 # Install only specific langpacks for needed languages/locales (edit for your own needs)
 dnf -y install glibc-langpack-{en,fi}
 
-# Trimmed KDE with core apps
+# Trimmed KDE with core apps and some weaker dependencies
 dnf -y install --setopt=install_weak_deps=False \
     ark \
     bluedevil \
@@ -14,6 +14,7 @@ dnf -y install --setopt=install_weak_deps=False \
     dolphin \
     dolphin-plugins \
     filelight \
+    flatpak \
     flatpak-kcm \
     kate \
     kate-krunner-plugin \
