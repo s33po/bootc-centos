@@ -51,7 +51,6 @@ dnf -y install --setopt=install_weak_deps=False \
     man-pages \
     mtr \
     parted \
-    plocate \
     rsync \
     strace \
     symlinks \
