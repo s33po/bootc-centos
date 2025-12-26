@@ -2,14 +2,11 @@
 
 set -xeuo pipefail
 
+# Remove offline docs
+rm -rf /usr/share/doc
+
 # Final cleanup
 dnf clean all
-find /var -mindepth 1 -maxdepth 1 ! -path '/var/cache' -delete 2>/dev/null || true
-find /var/cache -mindepth 1 ! -path '/var/cache/dnf*' -delete 2>/dev/null || true
-mkdir -p /var /boot
-
-# Remove just docs, so ISOs work.....
-rm -rf /usr/share/doc/just/*
-
-# Make /usr/local writeable
-ln -s /var/usrlocal /usr/local
+find /var -mindepth 1 -delete
+find /boot -mindepth 1 -delete
+find /tmp -mindepth 1 -delete
