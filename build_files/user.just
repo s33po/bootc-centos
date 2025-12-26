@@ -64,7 +64,7 @@ update-containers:
 
 # Clean up system caches and unused packages
 [group('System')]
-cleanup-system:
+clean-system:
     #!/usr/bin/env bash
     echo "Cleaning up system..."
 
@@ -286,27 +286,7 @@ update-brew:
     brew update && brew upgrade && brew cleanup
     echo "Homebrew update completed!"
 
-# Install full Fonts group to user directory for comprehensive font coverage
-[group('System')]
-install-fonts:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    sudo bootc usr-overlay
-    
-    echo "Installing fonts..."  
-    sudo dnf -y group install "Fonts"
-
-    echo "Copying fonts to ~/.local/share/fonts..."
-    mkdir -p ~/.local/share/fonts
-    cp -rv /usr/share/fonts/* ~/.local/share/fonts/
-
-    echo "Updating font cache..."
-    fc-cache -fv ~/.local/share/fonts
-    echo ""
-    echo "Fonts installed to user directory!"
-    echo "To see installed fonts: fc-list"
-
 # Show this help message
 [group('Help')]
 help:
-    @just --list
+    @jmain --list
