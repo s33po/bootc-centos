@@ -2,18 +2,32 @@
 
 set -xeuo pipefail
 
-# Remove subscription-manager, install dnf-plugins, EPEL and enable CRB
-dnf -y remove subscription-manager console-login-helper-messages
-dnf -y install 'dnf-command(versionlock)' epel-release
+# Remove subscription-manager, install EPEL and enable CRB
+dnf -y remove subscription-manager
 dnf config-manager --set-enabled crb
-dnf -y upgrade epel-release
+dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
 
 # Set global dnf options
 dnf config-manager --save \
     --setopt=max_parallel_downloads=10 \
     --setopt=exclude="\
-        PackageKit,PackageKit-command-not-found,rootfiles,redhat-flatpak-repo,setroubleshoot,\
-        firefox,loupe,gnome-characters,gnome-font-viewer,gnome-user-docs,\
-        glibc-all-langpacks,cldr-emoji-annotation,ibus-typing-booster,gnome-shell-extension-background-logo,\
-        centos-backgrounds,gnome-remote-desktop,libsane-hpaio,sane-backends-drivers-scanners,yelp-tools,NetworkManager-adsl
+        PackageKit,PackageKit-command-not-found,redhat-flatpak-repo,setroubleshoot,\
+        firefox,loupe,gnome-characters,gnome-font-viewer,gnome-user-docs,yelp-tools \
+        glibc-all-langpacks,gnome-shell-extension-background-logo,gnome-remote-desktop
     "
+
+# Install gcc for brew (pulls kernel-headers)
+#dnf -y --setopt=install_weak_deps=False install gcc
+
+# Configure bootc updates
+sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.service
+
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
+sed -i 's|^#\?Persistent=.*|Persistent=true|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
+sed -i 's|^#\?AutomaticUpdatePolicy=.*|AutomaticUpdatePolicy=stage|' \
+  /etc/rpm-ostreed.conf
