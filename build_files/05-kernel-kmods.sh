@@ -2,7 +2,7 @@
 
 set -xeuo pipefail
 
-### Swap stock kernel to newer HyperScale kernel ###
+### Swap stock kernel to newer Kmods SIG kernel
 
 # Configuration
 ARCH=$(uname -m)
@@ -10,25 +10,22 @@ ARCH=$(uname -m)
 # Capture old kernels before changes
 OLD_KERNELS=$(rpm -q kernel 2>/dev/null | sort -V || echo "")
 
-# Add HyperScale kernel repository
-dnf -y install centos-release-hyperscale-kernel 'dnf-command(versionlock)'
+# Add Kmods SIG kernel repository
+dnf -y install centos-release-kmods-kernel 'dnf-command(versionlock)'
 
 # Clear any existing versionlocks
 dnf versionlock clear
 
-# Install the latest kernel and matching tools from HyperScale
+# Install the latest kernel and matching tools
 # Use noscripts to avoid failing initramfs scriptlets (we generate initramfs later manually)
-dnf -y install --setopt=tsflags=noscripts kernel 
-dnf -y install kernel-tools kernel-tools-libs kernel-headers
+dnf -y install --allowerasing --setopt=tsflags=noscripts kernel kernel-core kernel-modules kernel-modules-core
+dnf -y install --allowerasing  kernel-tools kernel-tools-libs
 
 # Get the newly installed kernel version
 NEW_KERNEL=$(rpm -q kernel | sort -V | tail -n1)
 KERNEL_VERSION=${NEW_KERNEL#kernel-}
 
 echo "New kernel installed: ${KERNEL_VERSION}"
-
-# Install devtools during kernel swap so related packages match new kernel
-bash "$(dirname "$0")/10-devtools.sh"
 
 # Versionlock the new kernel and its related packages
 dnf versionlock add "${NEW_KERNEL}"
@@ -51,7 +48,7 @@ if [ -n "$OLD_KERNELS" ]; then
     done
 fi
 
-# Disable Hyperscale repositories after kernel swap
-dnf config-manager --set-disabled centos-hyperscale centos-hyperscale-kernel
+# Disable Kmods repositories after kernel swap
+dnf config-manager --set-disabled centos-kmods-kernel
 
-echo "===== Kernel ${KERNEL_VERSION} installed, set as default, and locked ====="
+echo "===== New kernel ${KERNEL_VERSION} installed, set as default, and locked ====="
