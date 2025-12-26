@@ -3,13 +3,13 @@
 set -xeuo pipefail
 
 # Enable services
-systemctl enable systemd-resolved.service
-systemctl enable systemd-timesyncd
-systemctl enable sddm.service
 systemctl enable bootc-fetch-apply-updates.timer
 systemctl enable firewalld
 systemctl enable podman.socket
+systemctl enable sddm.service
+systemctl enable systemd-resolved.service
 
 # Disable services
 systemctl disable rpm-ostree-countme.timer
 systemctl disable rpcbind.socket
+

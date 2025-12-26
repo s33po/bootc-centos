@@ -13,15 +13,11 @@ dnf -y install --setopt=install_weak_deps=False \
     default-fonts-core \
     dolphin \
     dolphin-plugins \
-    exiv2 \
     filelight \
     flatpak-kcm \
-    glib-networking \
-    ibus \
     kate \
     kate-krunner-plugin \
     kate-plugins \
-    kaccounts-providers \
     kcalc \
     kdialog \
     kde-gtk-config \
@@ -32,14 +28,11 @@ dnf -y install --setopt=install_weak_deps=False \
     kio-extras \
     kjournald \
     konsole \
-    kscreen \
     ksshaskpass \
-    low-memory-monitor \
-    libproxy-bin \
+    liberation-fonts \
     media-player-info \
     NetworkManager-wifi \
     pam-kwallet \
-    pipewire \
     plymouth-system-theme \
     plasma-desktop \
     plasma-discover \
@@ -54,8 +47,8 @@ dnf -y install --setopt=install_weak_deps=False \
     sddm \
     sddm-breeze \
     sddm-kcm \
-    signon-kwallet-extension \
     spectacle \
     udev-hid-bpf-stable \
     upower \
-    usbutils
+    usbutils \
+    zip

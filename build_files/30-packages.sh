@@ -13,5 +13,5 @@ dnf -y install \
     steam-devices \
     tmux \
     vim \
-    wireguard-tools \
+    wget \
     zsh

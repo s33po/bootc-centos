@@ -33,7 +33,6 @@ dnf -y remove \
 # Remove unnecessary packages
 dnf -y remove \
     adcli \
-    chrony \
     console-login-helper-messages \
     irqbalance \
     sssd* \
@@ -48,19 +47,21 @@ dnf -y install --setopt=install_weak_deps=False \
     firewalld \
     fuse \
     git-core \
+    lshw \
     man-pages \
     mtr \
     parted \
+    plocate \
     rsync \
+    strace \
+    symlinks \
     system-reinstall-bootc \
     systemd-container \
     systemd-resolved \
-    systemd-timesyncd \
     time \
     tree \
     tuned \
-    tuned-ppd \
-    wget
+    tuned-ppd
 
 # Enable resolved
 tee /usr/lib/systemd/system-preset/91-resolved-default.preset <<'EOF'
