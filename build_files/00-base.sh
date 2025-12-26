@@ -65,7 +65,7 @@ dnf -y install --setopt=install_weak_deps=False \
     tuned \
     tuned-ppd
 
-# Enable resolved
+# Preset and enable resolved
 tee /usr/lib/systemd/system-preset/91-resolved-default.preset <<'EOF'
 enable systemd-resolved.service
 EOF
