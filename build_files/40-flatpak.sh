@@ -20,7 +20,6 @@ com.github.tchx84.Flatseal
 io.github.flattool.Warehouse
 com.ranfdev.DistroShelf
 org.gnome.Boxes
-de.capypara.FieldMonitor
 org.gnome.World.PikaBackup
 com.github.neithern.g4music
 com.github.rafostar.Clapper

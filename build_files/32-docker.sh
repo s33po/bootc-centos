@@ -6,12 +6,12 @@ set -xeuo pipefail
 dnf config-manager --add-repo "https://download.docker.com/linux/centos/docker-ce.repo"
 dnf config-manager --set-disabled docker-ce-stable
 dnf -y --enablerepo docker-ce-stable install --setopt=install_weak_deps=False \
-	docker-ce \
-	docker-ce-cli \
+    docker-ce \
+    docker-ce-cli \
     docker-model-plugin \
-	containerd.io \
-	docker-buildx-plugin \
-	docker-compose-plugin
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin
 
 ### Docker related setup/configuration ###
 
