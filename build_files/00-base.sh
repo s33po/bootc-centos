@@ -10,14 +10,14 @@ rm -rf /opt /usr/local
 ln -sf var/opt /opt
 ln -sf ../var/usrlocal /usr/local
 
-# Set global dnf options
-dnf config-manager --save \
-    --setopt=max_parallel_downloads=10
-
 # Remove subscription-manager, install EPEL and enable CRB
 dnf -y remove subscription-manager
 dnf config-manager --set-enabled crb
 dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
+
+# Set global dnf options
+dnf config-manager --save \
+    --setopt=max_parallel_downloads=10
 
 # Remove unnecessary firmware
 dnf -y remove \
@@ -39,7 +39,7 @@ dnf -y remove \
     yggdrasil*
 
 # Install gcc for brew (pulls kernel-headers)
-#nf -y --setopt=install_weak_deps=False install gcc
+#dnf -y --setopt=install_weak_deps=False install gcc
 
 # Install packages
 dnf -y install --setopt=install_weak_deps=False \
@@ -69,6 +69,7 @@ dnf -y install --setopt=install_weak_deps=False \
 tee /usr/lib/systemd/system-preset/91-resolved-default.preset <<'EOF'
 enable systemd-resolved.service
 EOF
+
 tee /usr/lib/tmpfiles.d/resolved-default.conf <<'EOF'
 L /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf
 EOF
@@ -79,7 +80,7 @@ systemctl preset systemd-resolved.service
 sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' \
   /usr/lib/systemd/system/bootc-fetch-apply-updates.service
 
-sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d|' \
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=3d|' \
   /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
 
 sed -i 's|^#\?Persistent=.*|Persistent=true|' \

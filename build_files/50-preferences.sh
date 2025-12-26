@@ -5,7 +5,7 @@ set -xeuo pipefail
 # Disable lastlog display
 authselect enable-feature with-silent-lastlog
 
-# Add Justfile to image
+# Add user.just to image
 install -Dm644 /ctx/build_files/user.just /usr/share/just/user.just
 
 # Create global alias for user.just commands
