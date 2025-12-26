@@ -9,7 +9,7 @@ authselect enable-feature with-silent-lastlog
 dnf remove -y console-login-helper-messages
 
 # Add Justfile to image
-install -Dm644 /run/context/build_files/user.just /usr/share/just/user.just
+install -Dm644 /ctx/build_files/user.just /usr/share/just/user.just
 
 # Create global alias for user.just commands
 echo "alias jmain='just --justfile /usr/share/just/user.just'" > /etc/profile.d/jmain.sh
