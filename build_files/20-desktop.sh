@@ -20,6 +20,7 @@ dnf -y install --setopt=install_weak_deps=False \
     kate-plugins \
     kcalc \
     kdialog \
+    kdnssd \
     kde-gtk-config \
     kde-partitionmanager \
     kdegraphics-thumbnailers \
@@ -28,11 +29,14 @@ dnf -y install --setopt=install_weak_deps=False \
     kio-extras \
     kjournald \
     konsole \
+    kscreen \
     ksshaskpass \
     liberation-fonts \
     media-player-info \
     NetworkManager-wifi \
     pam-kwallet \
+    pipewire \
+    pipewire-alsa \
     plymouth-system-theme \
     plasma-desktop \
     plasma-discover \
