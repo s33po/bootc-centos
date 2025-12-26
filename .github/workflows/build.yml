@@ -74,7 +74,7 @@ jobs:
 
       - name: Build, Rechunk, and Push
         id: bootc
-        uses: jharmison-redhat/action-bootc-build@main
+        uses: jharmison-redhat/action-bootc-build@v1
         with:
           labels: ${{ steps.metadata.outputs.labels }}
           tag: "${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
