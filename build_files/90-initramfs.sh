@@ -6,9 +6,6 @@ set -xeuo pipefail
 mkdir -p /etc/dracut.conf.d
 echo 'add_dracutmodules+=" plymouth "' > /etc/dracut.conf.d/plymouth.conf
 
-# Add resume module for hibernation
-echo "add_dracutmodules+=\" resume \"" >/etc/dracut.conf.d/resume.conf
-
 # Write plymouthd.conf
 mkdir -p /etc/plymouth
 cat > /etc/plymouth/plymouthd.conf <<EOF
