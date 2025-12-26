@@ -13,11 +13,11 @@ dnf -y install \
     fzf \
     git \
     just \
-    nfs-utils \
     nvtop \
     steam-devices \
     system-reinstall-bootc \
     systemd-container \
     tmux \
     wireguard-tools \
+    fira-code-fonts \
     zsh

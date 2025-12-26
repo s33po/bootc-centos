@@ -11,8 +11,19 @@ dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noar
 dnf config-manager --save \
     --setopt=max_parallel_downloads=10 \
     --setopt=exclude="\
-        PackageKit,PackageKit-command-not-found,rootfiles,plasma-discover-kns,plasma-discover-packagekit,\
+        PackageKit,PackageKit-command-not-found,plasma-discover-packagekit,\
         plasma-workspace-wallpapers,redhat-flatpak-repo,setroubleshoot,firefox,glibc-all-langpacks,\
-        ibus-typing-booster,cldr-emoji-annotation,plasma-welcome,xwaylandvideobridge,\
-        nvidia-gpu-firmware,intel-gpu-firmware,iwlwifi-dvm-firmware
+        plasma-welcome,xwaylandvideobridge
     "
+# Configure bootc updates
+sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.service
+
+sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
+sed -i 's|^#\?Persistent=.*|Persistent=true|' \
+  /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+
+sed -i 's|^#\?AutomaticUpdatePolicy=.*|AutomaticUpdatePolicy=stage|' \
+  /etc/rpm-ostreed.conf

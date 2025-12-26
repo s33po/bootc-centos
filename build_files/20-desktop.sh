@@ -9,49 +9,59 @@ dnf -y install glibc-langpack-{en,fi}
 dnf -y group install \
     "base-graphical" \
     "Core" \
-    "Hardware Support" \
     "Multimedia" \
     "Common NetworkManager submodules" \
     "Standard"
 
 # Trimmed KDE with core apps
 dnf -y install \
-    plasma-desktop \
-    sddm \
-    sddm-breeze \
-    sddm-kcm \
     ark \
     bluedevil \
+    breeze-gtk-gtk3 \
+    default-fonts-core \
     dolphin \
-    flatpak-kcm \
+    dolphin-plugins \
     filelight \
+    flatpak-kcm \
+    kate \
+    kate-krunner-plugin \
+    kate-plugins \
+    kcalc \
+    kdialog \
+    kdnssd \
     kde-gtk-config \
     kde-partitionmanager \
     kdegraphics-thumbnailers \
+    kf6-baloo-file \
     kio-admin \
+    kio-extras \
     kjournald \
     konsole \
     kscreen \
     ksshaskpass \
-    pam-kwallet \
-    plasma-discover \
-    plasma-disks \
-    plasma-nm \
-    plasma-systemmonitor \
-    spectacle \
-    kate \
-    kcalc \
-    plymouth-system-theme
-
-# Core fonts
-dnf -y install --setopt=install_weak_deps=False \
-    default-fonts-core \
-    redhat-display-vf-fonts \
     liberation-fonts \
-    fira-code-fonts
-
-# Extras for image thumbnailing
-dnf -y install --setopt=install_weak_deps=False \
-    avif-pixbuf-loader \
-    gdk-pixbuf2-modules-extra \
-    webp-pixbuf-loader
+    media-player-info \
+    NetworkManager-wifi \
+    pam-kwallet \
+    pipewire \
+    pipewire-alsa \
+    plymouth-system-theme \
+    plasma-desktop \
+    plasma-discover \
+    plasma-discover-flatpak \
+    plasma-disks \
+    plasma-milou \
+    plasma-nm \
+    plasma-pa \
+    plasma-systemmonitor \
+    qt6-qtimageformats \
+    redhat-display-vf-fonts \
+    samba-client \
+    sddm \
+    sddm-breeze \
+    sddm-kcm \
+    spectacle \
+    udev-hid-bpf-stable \
+    upower \
+    usbutils \
+    zip
