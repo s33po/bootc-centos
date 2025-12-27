@@ -14,7 +14,7 @@ fi
 # List of build scripts to EXCLUDE
 EXCLUDE=(
   "05-kernel-kmods.sh"
-  "11-virtualization.sh"
+  "10-virtualization.sh"
   "25-multimedia.sh"
   "31-vscode.sh"
   "32-docker.sh"
