@@ -2,7 +2,7 @@
 
 [private]
 default:
-    @just --list
+    @jmain --list
 
 # Update (system, flatpaks, brew)
 [group('System')]
@@ -46,13 +46,12 @@ update-dbox:
         fi
     fi
 
-    echo "Distrobox updates completed!"
+    echo "Distroboxes updated!"
 
 # Clean up system
 [group('System')]
 clean-system:
     #!/usr/bin/env bash
-    echo "Cleaning up system..."
 
     # Clean flatpak
     if command -v flatpak &> /dev/null; then
@@ -136,8 +135,3 @@ update-brew:
     echo "Updating Homebrew..."
     brew update && brew upgrade && brew cleanup
     echo "Homebrew update completed!"
-
-# Show this help message
-[group('Help')]
-help:
-    @jmain --list
