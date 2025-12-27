@@ -2,7 +2,7 @@
 
 [private]
 default:
-    @jmain --list
+    @just --justfile /usr/share/just/user.just --list
 
 # Update (system, flatpaks, brew)
 [group('System')]
