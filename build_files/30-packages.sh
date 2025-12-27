@@ -10,8 +10,5 @@ dnf -y install \
     fzf \
     just \
     nvtop \
+    ripgrep \
     steam-devices \
-    tmux \
-    vim \
-    wget \
-    zsh

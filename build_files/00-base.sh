@@ -2,14 +2,6 @@
 
 set -xeuo pipefail
 
-mkdir -m 0700 -p /var/roothome
-
-# Make /usr/local and /opt mutable
-mkdir -p /var/{opt,usrlocal}
-rm -rf /opt /usr/local
-ln -sf var/opt /opt
-ln -sf ../var/usrlocal /usr/local
-
 # Remove subscription-manager, install EPEL and enable CRB
 dnf -y remove subscription-manager
 dnf config-manager --set-enabled crb
@@ -19,23 +11,26 @@ dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noar
 dnf config-manager --save \
     --setopt=max_parallel_downloads=10
 
-# Remove unnecessary firmware
+# Remove unnecessary firmware and packages
 dnf -y remove \
     atheros-firmware \
     brcmfmac-firmware \
+    cirrus-audio-firmware \
+    intel-audio-firmware \
     intel-gpu-firmware \
     mt7xxx-firmware \
     nvidia-gpu-firmware \
     nxpwireless-firmware \
     realtek-firmware \
-    tiwilink-firmware
-
-# Remove unnecessary packages
-dnf -y remove \
+    tiwilink-firmware \
     adcli \
     console-login-helper-messages \
     irqbalance \
+    insights-core \
+    microcode_ctl \
+    sos \
     sssd* \
+    toolbox \
     yggdrasil*
 
 # Install gcc for brew (pulls kernel-headers)
@@ -51,14 +46,10 @@ dnf -y install --setopt=install_weak_deps=False \
     fuse \
     git-core \
     lshw \
-    man-pages \
     mtr \
-    parted \
     qemu-guest-agent \
     rsync \
-    spice-vdagent \
     strace \
-    symlinks \
     system-reinstall-bootc \
     systemd-container \
     systemd-resolved \
