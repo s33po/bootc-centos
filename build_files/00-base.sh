@@ -11,6 +11,11 @@ dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noar
 dnf config-manager --save \
     --setopt=max_parallel_downloads=10
 
+# These are needed to remove intel microcode and nfs-utils..
+mkdir -p /var/lib/rpm-state
+touch /var/lib/rpm-state/microcode_ctl_un_{intel-ucode,ucode_caveats,file_list}
+touch /var/lib/rpm-state/nfs-server.cleanup
+
 # Remove unnecessary firmware and packages
 dnf -y remove \
     atheros-firmware \
@@ -19,6 +24,7 @@ dnf -y remove \
     intel-audio-firmware \
     intel-gpu-firmware \
     mt7xxx-firmware \
+    nfs-{utils,server} \
     nvidia-gpu-firmware \
     nxpwireless-firmware \
     realtek-firmware \
